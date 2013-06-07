@@ -28,7 +28,7 @@ namespace ServiceStack.Text
 		{
 			public void WriteDebug(string error)
 			{
-#if NETFX_CORE
+#if NETFX_CORE || NETCF
 				System.Diagnostics.Debug.WriteLine(error);
 #else
 				Console.WriteLine(error);
@@ -36,17 +36,19 @@ namespace ServiceStack.Text
 			}
 
 			public void WriteDebug(string format, params object[] args)
-			{
+            {
 #if NETFX_CORE
                 System.Diagnostics.Debug.WriteLine(format, args);
+#elif NETCF
+                System.Diagnostics.Debug.WriteLine(string.Format(format, args));
 #else
                 Console.WriteLine(format, args);
 #endif
 			}
 
 		    public void WriteWarning(string warning)
-		    {
-#if NETFX_CORE
+            {
+#if NETFX_CORE || NETCF
                 System.Diagnostics.Debug.WriteLine(warning);                
 #else
                 Console.WriteLine(warning);                
@@ -54,17 +56,19 @@ namespace ServiceStack.Text
 		    }
 
 		    public void WriteWarning(string format, params object[] args)
-		    {
+            {
 #if NETFX_CORE
                 System.Diagnostics.Debug.WriteLine(format, args);
+#elif NETCF
+                System.Diagnostics.Debug.WriteLine(string.Format(format, args));
 #else
                 Console.WriteLine(format, args);
 #endif
             }
 
 		    public void WriteError(Exception ex)
-			{
-#if NETFX_CORE
+            {
+#if NETFX_CORE || NETCF
                 System.Diagnostics.Debug.WriteLine(ex);
 #else
                 Console.WriteLine(ex);
@@ -72,8 +76,8 @@ namespace ServiceStack.Text
 			}
 
 			public void WriteError(string error)
-			{
-#if NETFX_CORE
+            {
+#if NETFX_CORE || NETCF
                 System.Diagnostics.Debug.WriteLine(error);
 #else
                 Console.WriteLine(error);
@@ -81,13 +85,15 @@ namespace ServiceStack.Text
 			}
 
 			public void WriteError(string format, params object[] args)
-			{
+            {
 #if NETFX_CORE
                 System.Diagnostics.Debug.WriteLine(format, args);
+#elif NETCF
+                System.Diagnostics.Debug.WriteLine(string.Format(format, args));
 #else
                 Console.WriteLine(format, args);
 #endif
-			}
+            }
 		}
 	}
 }

@@ -83,7 +83,11 @@ namespace ServiceStack.Text
         public static DateTime FromUnixTimeMs(string msSince1970)
         {
             long ms;
+#if !NETCF
             if (long.TryParse(msSince1970, out ms)) return ms.FromUnixTimeMs();
+#else
+            if (ParseAssistant.TryParse(msSince1970, out ms)) return ms.FromUnixTimeMs();
+#endif
 
             // Do we really need to support fractional unix time ms time strings??
             return double.Parse(msSince1970).FromUnixTimeMs();
@@ -92,7 +96,11 @@ namespace ServiceStack.Text
         public static DateTime FromUnixTimeMs(string msSince1970, TimeSpan offset)
         {
             long ms;
+#if !NETCF
             if (long.TryParse(msSince1970, out ms)) return ms.FromUnixTimeMs(offset);
+#else
+            if (ParseAssistant.TryParse(msSince1970, out ms)) return ms.FromUnixTimeMs(offset);
+#endif
 
             // Do we really need to support fractional unix time ms time strings??
             return double.Parse(msSince1970).FromUnixTimeMs(offset);
@@ -123,7 +131,16 @@ namespace ServiceStack.Text
             return dateTime.ToStableUniversalTime().RoundToSecond().Equals(otherDateTime.ToStableUniversalTime().RoundToSecond());
         }
 
+#if NETCF
+        public static string ToTimeOffsetString(this TimeSpan offset)
+        {
+            return ToTimeOffsetString(offset, "");
+        }
+
+        public static string ToTimeOffsetString(this TimeSpan offset, string seperator)
+#else
         public static string ToTimeOffsetString(this TimeSpan offset, string seperator = "")
+#endif
         {
             var hours = Math.Abs(offset.Hours).ToString(CultureInfo.InvariantCulture);
             var minutes = Math.Abs(offset.Minutes).ToString(CultureInfo.InvariantCulture);
@@ -150,7 +167,7 @@ namespace ServiceStack.Text
             if (dateTime == DateTime.MinValue)
                 return MinDateTimeUtc;
 
-#if SILVERLIGHT
+#if SILVERLIGHT || NETCF
 			// Silverlight 3, 4 and 5 all work ok with DateTime.ToUniversalTime, but have no TimeZoneInfo.ConverTimeToUtc implementation.
 			return dateTime.ToUniversalTime();
 #else

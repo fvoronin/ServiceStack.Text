@@ -10,7 +10,7 @@
 // Licensed under the same terms of ServiceStack: new BSD license.
 //
 
-#if !XBOX && !MONOTOUCH && !SILVERLIGHT
+#if !XBOX && !MONOTOUCH && !SILVERLIGHT && !NETCF
 using System.Reflection.Emit;
 #endif
 
@@ -92,7 +92,7 @@ namespace ServiceStack.Text.Common
                     return null;
                 }
 
-#if !SILVERLIGHT && !MONOTOUCH
+#if !SILVERLIGHT && !MONOTOUCH && !NETCF
                 if (type.IsInterface || type.IsAbstract)
                 {
                     return DynamicProxy.GetInstanceFor(type).GetType();
@@ -156,10 +156,18 @@ namespace ServiceStack.Text.Common
             if (string.IsNullOrEmpty(value)) return null;
 
             bool boolValue;
+#if !NETCF
             if (bool.TryParse(value, out boolValue)) return boolValue;
+#else
+            if (ParseAssistant.TryParse(value, out boolValue)) return boolValue;
+#endif
 
             decimal decimalValue;
+#if !NETCF
             if (decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out decimalValue))
+#else // TODO NETCF check NumberStyles.Number for what
+            if (ParseAssistant.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out decimalValue))
+#endif
             {
                 if (decimalValue == decimal.Truncate(decimalValue))
                 {
@@ -179,10 +187,18 @@ namespace ServiceStack.Text.Common
             }
 
             float floatValue;
+#if !NETCF
             if (float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out floatValue)) return floatValue;
+#else // TODO NETCF check NumberStyles.Number for what
+            if (ParseAssistant.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out floatValue)) return floatValue;
+#endif
 
             double doubleValue;
+#if !NETCF
             if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out doubleValue)) return doubleValue;
+#else // TODO NETCF check NumberStyles.Number for what
+            if (ParseAssistant.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out doubleValue)) return doubleValue;
+#endif
 
             return null;
         }
@@ -262,7 +278,7 @@ namespace ServiceStack.Text.Common
                 if (fieldInfo == null) return null;
             }
 
-#if SILVERLIGHT || MONOTOUCH || XBOX
+#if SILVERLIGHT || MONOTOUCH || XBOX || NETCF
             if (propertyInfo.CanWrite)
             {
                 var setMethodInfo = propertyInfo.SetMethod();
@@ -277,7 +293,7 @@ namespace ServiceStack.Text.Common
 #endif
         }
 
-#if !SILVERLIGHT && !MONOTOUCH && !XBOX
+#if !SILVERLIGHT && !MONOTOUCH && !XBOX && !NETCF
 
         private static SetPropertyDelegate CreateIlPropertySetter(PropertyInfo propertyInfo)
         {
@@ -339,7 +355,7 @@ namespace ServiceStack.Text.Common
         {
             if (!propertyInfo.CanWrite || propertyInfo.GetIndexParameters().Any()) return null;
 
-#if SILVERLIGHT || MONOTOUCH || XBOX
+#if SILVERLIGHT || MONOTOUCH || XBOX || NETCF
             var setMethodInfo = propertyInfo.SetMethod();
             return (instance, value) => setMethodInfo.Invoke(instance, new[] { value });
 #else
@@ -350,7 +366,7 @@ namespace ServiceStack.Text.Common
         internal static SetPropertyDelegate GetSetFieldMethod(Type type, FieldInfo fieldInfo)
         {
 
-#if SILVERLIGHT || MONOTOUCH || XBOX
+#if SILVERLIGHT || MONOTOUCH || XBOX || NETCF
             return (instance, value) => fieldInfo.SetValue(instance, value);
 #else
             return CreateIlFieldSetter(fieldInfo);
@@ -374,7 +390,7 @@ namespace ServiceStack.Text.Common
             if (fieldInfo.ReflectedType() != fieldInfo.DeclaringType)
                 fieldInfo = fieldInfo.DeclaringType.GetFieldInfo(fieldInfo.Name);
 
-#if SILVERLIGHT || MONOTOUCH || XBOX
+#if SILVERLIGHT || MONOTOUCH || XBOX || NETCF
             return (instance, value) => fieldInfo.SetValue(instance, value);
 #else
 			return CreateIlFieldSetter(fieldInfo);

@@ -124,7 +124,11 @@ namespace ServiceStack.Text.Common
 
             var to = (createListType == null || isReadOnly)
                 ? new List<T>()
+#if !NETCF
                 : (ICollection<T>)createListType.CreateInstance();
+#else
+                : (ICollection<T>)Activator.CreateInstance(createListType);
+#endif
 
             if (value == string.Empty) return to;
 
@@ -180,7 +184,11 @@ namespace ServiceStack.Text.Common
 
             //TODO: 8-10-2011 -- this CreateInstance call should probably be moved over to ReflectionExtensions, 
             //but not sure how you'd like to go about caching constructors with parameters -- I would probably build a NewExpression, .Compile to a LambdaExpression and cache
+#if !NETCF
             return isReadOnly ? (ICollection<T>)Activator.CreateInstance(createListType, to) : to;
+#else
+            return isReadOnly ? (ICollection<T>)createListType.GetConstructor(new Type[1] { typeof(ICollection<T>) }).Invoke(new[] {to}) : to;
+#endif
         }
     }
 

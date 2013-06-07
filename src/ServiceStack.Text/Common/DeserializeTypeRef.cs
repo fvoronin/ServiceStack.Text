@@ -18,6 +18,7 @@ namespace ServiceStack.Text.Common
         internal static SerializationException GetSerializationException(string propertyName, string propertyValueString, Type propertyType, Exception e)
         {
             var serializationException = new SerializationException(String.Format("Failed to set property '{0}' with '{1}'", propertyName, propertyValueString), e);
+#if !NETCF
             if (propertyName != null)
             {
                 serializationException.Data.Add("propertyName", propertyName);
@@ -30,6 +31,7 @@ namespace ServiceStack.Text.Common
             {
                 serializationException.Data.Add("propertyType", propertyType);
             }
+#endif
             return serializationException;
         }
 
@@ -49,6 +51,7 @@ namespace ServiceStack.Text.Common
                 foreach (var propertyInfo in propertyInfos)
                 {
                     var propertyName = propertyInfo.Name;
+#if !NETCF // TODO NETCF DataContract not supported
                     if (isDataContract)
                     {
                         var dcsDataMember = propertyInfo.GetDataMember();
@@ -57,6 +60,7 @@ namespace ServiceStack.Text.Common
                             propertyName = dcsDataMember.Name;
                         }
                     }
+#endif
                     map[propertyName] = TypeAccessor.Create(serializer, typeConfig, propertyInfo);
                 }
             }

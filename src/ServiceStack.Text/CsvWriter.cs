@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Reflection;
 using ServiceStack.Text.Common;
 using ServiceStack.Text.Reflection;
-#if WINDOWS_PHONE && !WP8
+#if (WINDOWS_PHONE || NETCF) && !WP8
 using ServiceStack.Text.WP;
 #endif
 
@@ -137,6 +137,7 @@ namespace ServiceStack.Text
 
                 PropertyGetters.Add(propertyInfo.GetValueGetter<T>());
                 var propertyName = propertyInfo.Name;
+#if !NETCF
                 if (isDataContract)
                 {
                     var dcsDataMember = propertyInfo.GetDataMember();
@@ -145,6 +146,7 @@ namespace ServiceStack.Text
                         propertyName = dcsDataMember.Name;
                     }
                 }
+#endif
                 Headers.Add(propertyName);
             }
         }

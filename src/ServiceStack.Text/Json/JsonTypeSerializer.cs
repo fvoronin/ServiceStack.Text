@@ -128,6 +128,7 @@ namespace ServiceStack.Text.Json
                 WriteDateTime(writer, dateTime);
         }
 
+#if !NETCF
         public void WriteDateTimeOffset(TextWriter writer, object oDateTimeOffset)
         {
             writer.Write(JsWriter.QuoteString);
@@ -142,6 +143,7 @@ namespace ServiceStack.Text.Json
             else
                 WriteDateTimeOffset(writer, dateTimeOffset);
         }
+#endif
 
         public void WriteTimeSpan(TextWriter writer, object oTimeSpan)
         {
@@ -301,7 +303,7 @@ namespace ServiceStack.Text.Json
 
         public void WriteLinqBinary(TextWriter writer, object linqBinaryValue)
         {
-#if !MONOTOUCH && !SILVERLIGHT && !XBOX  && !ANDROID
+#if !MONOTOUCH && !SILVERLIGHT && !XBOX  && !ANDROID && !NETCF
             WriteRawString(writer, Convert.ToBase64String(((System.Data.Linq.Binary)linqBinaryValue).ToArray()));
 #endif
         }
@@ -326,7 +328,15 @@ namespace ServiceStack.Text.Json
             return string.IsNullOrEmpty(value) ? value : ParseRawString(value);
         }
 
+#if NETCF
+        internal static bool IsEmptyMap(string value)
+        {
+            return IsEmptyMap(value, 1);
+        }
+        internal static bool IsEmptyMap(string value, int i)
+#else
         internal static bool IsEmptyMap(string value, int i = 1)
+#endif
         {
             for (; i < value.Length; i++) { var c = value[i]; if (c >= WhiteSpaceFlags.Length || !WhiteSpaceFlags[c]) break; } //Whitespace inline
             if (value.Length == i) return true;

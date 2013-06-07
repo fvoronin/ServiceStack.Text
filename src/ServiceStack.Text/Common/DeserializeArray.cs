@@ -37,7 +37,11 @@ namespace ServiceStack.Text.Common
             parseFn = (ParseArrayOfElementsDelegate)mi.CreateDelegate(typeof(ParseArrayOfElementsDelegate));
 #else
             var mi = genericType.GetMethod("ParseGenericArray", BindingFlags.Public | BindingFlags.Static);
+#if !NETCF
             parseFn = (ParseArrayOfElementsDelegate)Delegate.CreateDelegate(typeof(ParseArrayOfElementsDelegate), mi);
+#else
+            parseFn = (ParseArrayOfElementsDelegate)Delegate.CreateDelegate(typeof(ParseArrayOfElementsDelegate), null, mi);
+#endif
 #endif
 
             Dictionary<Type, ParseArrayOfElementsDelegate> snapshot, newCache;

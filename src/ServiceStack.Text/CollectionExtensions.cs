@@ -1,4 +1,4 @@
-#if WINDOWS_PHONE && !WP8
+#if (WINDOWS_PHONE || NETCF) && !WP8
 using ServiceStack.Text.WP;
 #endif
 using System;
@@ -23,7 +23,11 @@ namespace ServiceStack.Text
             if (genericTypeDefinition == typeof(LinkedList<T>))
                 return new LinkedList<T>(withItems);
 
+#if !NETCF
             var collection = (ICollection<T>)ofCollectionType.CreateInstance();
+#else
+            var collection = (ICollection<T>)Activator.CreateInstance(ofCollectionType);
+#endif
             foreach (var item in withItems)
             {
                 collection.Add(item);

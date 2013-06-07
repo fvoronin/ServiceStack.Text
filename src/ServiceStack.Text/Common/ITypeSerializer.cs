@@ -11,6 +11,7 @@ namespace ServiceStack.Text.Common
 
         WriteObjectDelegate GetWriteFn<T>();
         WriteObjectDelegate GetWriteFn(Type type);
+
         TypeInfo GetTypeInfo(Type type);
 
         void WriteRawString(TextWriter writer, string value);
@@ -22,8 +23,10 @@ namespace ServiceStack.Text.Common
         void WriteString(TextWriter writer, string value);
         void WriteDateTime(TextWriter writer, object oDateTime);
         void WriteNullableDateTime(TextWriter writer, object dateTime);
+#if !NETCF
         void WriteDateTimeOffset(TextWriter writer, object oDateTimeOffset);
         void WriteNullableDateTimeOffset(TextWriter writer, object dateTimeOffset);
+#endif
         void WriteTimeSpan(TextWriter writer, object dateTimeOffset);
         void WriteNullableTimeSpan(TextWriter writer, object dateTimeOffset);
         void WriteGuid(TextWriter writer, object oValue);

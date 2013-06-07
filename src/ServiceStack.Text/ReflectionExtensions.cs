@@ -316,6 +316,7 @@ namespace ServiceStack.Text
             return true;
         }
 
+
         static Dictionary<Type, EmptyCtorDelegate> ConstructorMethods = new Dictionary<Type, EmptyCtorDelegate>();
         public static EmptyCtorDelegate GetConstructorMethod(Type type)
         {
@@ -366,7 +367,7 @@ namespace ServiceStack.Text
             if (emptyCtor != null)
             {
 
-#if MONOTOUCH || c|| XBOX || NETFX_CORE
+#if MONOTOUCH || c|| XBOX || NETFX_CORE || NETCF
 				return () => Activator.CreateInstance(type);
 #elif WINDOWS_PHONE
                 return Expression.Lambda<EmptyCtorDelegate>(Expression.New(type)).Compile();
@@ -385,7 +386,7 @@ namespace ServiceStack.Text
 #endif
             }
 
-#if (SILVERLIGHT && !WINDOWS_PHONE) || XBOX
+#if (SILVERLIGHT && !WINDOWS_PHONE) || XBOX || NETCF
             return () => Activator.CreateInstance(type);
 #elif WINDOWS_PHONE
             return Expression.Lambda<EmptyCtorDelegate>(Expression.New(type)).Compile();
@@ -412,18 +413,24 @@ namespace ServiceStack.Text
             return TypeMeta<T>.EmptyCtorFn();
         }
 
+
         public static object CreateInstance(this Type type)
         {
+#if !NETCF
             var ctorFn = GetConstructorMethod(type);
             return ctorFn();
+#else
+            return Activator.CreateInstance(type);
+#endif
         }
 
+#if !NETCF
         public static object CreateInstance(string typeName)
         {
             var ctorFn = GetConstructorMethod(typeName);
             return ctorFn();
         }
-
+#endif
         public static PropertyInfo[] GetPublicProperties(this Type type)
         {
             if (type.IsInterface())
@@ -471,6 +478,7 @@ namespace ServiceStack.Text
             var publicProperties = GetPublicProperties(type);
             var publicReadableProperties = publicProperties.Where(x => x.PropertyGetMethod() != null);
 
+#if !NETCF
             if (type.IsDto())
             {
                 return !Env.IsMono
@@ -479,6 +487,7 @@ namespace ServiceStack.Text
                     : publicReadableProperties.Where(attr => 
                         attr.CustomAttributes(false).Any(x => x.GetType().Name == DataMember)).ToArray();
             }
+#endif
 
             // else return those properties that are not decorated with IgnoreDataMember
             return publicReadableProperties.Where(prop => !prop.CustomAttributes(false).Any(attr => attr.GetType().Name == IgnoreDataMember)).ToArray();
@@ -501,6 +510,7 @@ namespace ServiceStack.Text
             return type.HasAttribute<T>();
         }
 
+#if !NETCF
 #if !SILVERLIGHT && !MONOTOUCH 
         static readonly Dictionary<Type, FastMember.TypeAccessor> typeAccessorMap 
             = new Dictionary<Type, FastMember.TypeAccessor>();
@@ -580,6 +590,7 @@ namespace ServiceStack.Text
             }
             return null;
         }
+#endif
 #endif
     }
 
@@ -675,10 +686,14 @@ namespace ServiceStack.Text
 #endif
         }
 
+        private static readonly Type[] EmptyTypes = {};
+
         public static ConstructorInfo GetEmptyConstructor(this Type type)
         {
 #if NETFX_CORE
             return type.GetTypeInfo().DeclaredConstructors.FirstOrDefault(c => c.GetParameters().Count() == 0);
+#elif NETCF
+            return type.GetConstructor(EmptyTypes);
 #else
             return type.GetConstructor(Type.EmptyTypes);
 #endif
@@ -746,12 +761,24 @@ namespace ServiceStack.Text
 #endif
         }
 
+#if NETCF
+        public static bool HasAttribute<T>(this Type type) where T : Attribute { return HasAttribute<T>(type, true); }
+
+        public static bool HasAttribute<T>(this Type type, bool inherit) where T : Attribute
+#else
         public static bool HasAttribute<T>(this Type type, bool inherit = true) where T : Attribute
+#endif
         {
             return type.CustomAttributes(inherit).Any(x => x.GetType() == typeof(T));
         }
 
+#if NETCF
+        public static IEnumerable<T> AttributesOfType<T>(this Type type) where T : Attribute { return AttributesOfType<T>(type, true); }
+
+        public static IEnumerable<T> AttributesOfType<T>(this Type type, bool inherit) where T : Attribute
+#else
         public static IEnumerable<T> AttributesOfType<T>(this Type type, bool inherit = true) where T : Attribute
+#endif
         {
 #if NETFX_CORE
             return type.GetTypeInfo().GetCustomAttributes<T>(inherit);
@@ -760,6 +787,7 @@ namespace ServiceStack.Text
 #endif
         }
 
+#if !NETCF
         const string DataContract = "DataContractAttribute";
         public static bool IsDto(this Type type)
         {
@@ -771,8 +799,22 @@ namespace ServiceStack.Text
                    : type.GetCustomAttributes(true).Any(x => x.GetType().Name == DataContract);
 #endif
         }
+#else
+        public static bool IsDto(this Type type)
+        {
+            return false; // TODO NETCF IsDto is always false 
+        }
+#endif
 
+#if NETCF
+        public static MethodInfo PropertyGetMethod(this PropertyInfo pi)
+        {
+            return PropertyGetMethod(pi, false);
+        }
+        public static MethodInfo PropertyGetMethod(this PropertyInfo pi, bool nonPublic)
+#else
         public static MethodInfo PropertyGetMethod(this PropertyInfo pi, bool nonPublic = false)
+#endif
         {
 #if NETFX_CORE
             return pi.GetMethod;
@@ -802,7 +844,15 @@ namespace ServiceStack.Text
 #endif
         }
 
+#if NETCF
+        public static object[] CustomAttributes(this PropertyInfo propertyInfo)
+        {
+            return CustomAttributes(propertyInfo, true);
+        }
+        public static object[] CustomAttributes(this PropertyInfo propertyInfo, bool inherit)
+#else
         public static object[] CustomAttributes(this PropertyInfo propertyInfo, bool inherit = true)
+#endif
         {
 #if NETFX_CORE
             return propertyInfo.GetCustomAttributes(inherit).ToArray();
@@ -811,7 +861,15 @@ namespace ServiceStack.Text
 #endif
         }
 
+#if NETCF
+        public static object[] CustomAttributes(this PropertyInfo propertyInfo, Type attrType)
+        {
+            return CustomAttributes(propertyInfo, attrType, true);
+        }
+        public static object[] CustomAttributes(this PropertyInfo propertyInfo, Type attrType, bool inherit)
+#else
         public static object[] CustomAttributes(this PropertyInfo propertyInfo, Type attrType, bool inherit = true)
+#endif
         {
 #if NETFX_CORE
             return propertyInfo.GetCustomAttributes(inherit).Where(x => x.GetType() == attrType).ToArray();
@@ -820,7 +878,15 @@ namespace ServiceStack.Text
 #endif
         }
 
+#if NETCF
+        public static object[] CustomAttributes(this FieldInfo fieldInfo)
+        {
+            return CustomAttributes(fieldInfo, true);
+        }
+        public static object[] CustomAttributes(this FieldInfo fieldInfo, bool inherit)
+#else
         public static object[] CustomAttributes(this FieldInfo fieldInfo, bool inherit = true)
+#endif
         {
 #if NETFX_CORE
             return fieldInfo.GetCustomAttributes(inherit).ToArray();
@@ -829,7 +895,15 @@ namespace ServiceStack.Text
 #endif
         }
 
+#if NETCF
+        public static object[] CustomAttributes(this FieldInfo fieldInfo, Type attrType)
+        {
+            return CustomAttributes(fieldInfo, attrType, true);
+        }
+        public static object[] CustomAttributes(this FieldInfo fieldInfo, Type attrType, bool inherit)
+#else
         public static object[] CustomAttributes(this FieldInfo fieldInfo, Type attrType, bool inherit = true)
+#endif
         {
 #if NETFX_CORE
             return fieldInfo.GetCustomAttributes(inherit).Where(x => x.GetType() == attrType).ToArray();
@@ -838,7 +912,15 @@ namespace ServiceStack.Text
 #endif
         }
 
+#if NETCF
+        public static object[] CustomAttributes(this Type type)
+        {
+            return CustomAttributes(type, true);
+        }
+        public static object[] CustomAttributes(this Type type, bool inherit)
+#else
         public static object[] CustomAttributes(this Type type, bool inherit = true)
+#endif
         {
 #if NETFX_CORE
             return type.GetTypeInfo().GetCustomAttributes(inherit).ToArray();
@@ -847,7 +929,15 @@ namespace ServiceStack.Text
 #endif
         }
 
+#if NETCF
+        public static object[] CustomAttributes(this Type type, Type attrType)
+        {
+            return CustomAttributes(type, attrType, true);
+        }
+        public static object[] CustomAttributes(this Type type, Type attrType, bool inherit)
+#else
         public static object[] CustomAttributes(this Type type, Type attrType, bool inherit = true)
+#endif
         {
 #if NETFX_CORE
             return type.GetTypeInfo().GetCustomAttributes(inherit).Where(x => x.GetType() == attrType).ToArray();
@@ -856,7 +946,15 @@ namespace ServiceStack.Text
 #endif
         }
 
+#if NETCF
+        public static TAttr FirstAttribute<TAttr>(this Type type) where TAttr : Attribute
+        {
+            return FirstAttribute<TAttr>(type, true);
+        }
+        public static TAttr FirstAttribute<TAttr>(this Type type, bool inherit) where TAttr : Attribute
+#else
         public static TAttr FirstAttribute<TAttr>(this Type type, bool inherit = true) where TAttr : Attribute
+#endif
         {
 #if NETFX_CORE
             return type.GetTypeInfo().GetCustomAttributes(typeof(TAttr), inherit)
@@ -900,7 +998,7 @@ namespace ServiceStack.Text
 
         public static bool IsDynamic(this Assembly assembly)
         {
-#if MONOTOUCH || WINDOWS_PHONE || NETFX_CORE
+#if MONOTOUCH || WINDOWS_PHONE || NETFX_CORE || NETCF
             return false;
 #else
             try
@@ -917,7 +1015,16 @@ namespace ServiceStack.Text
 #endif
         }
 
+#if NETCF
+        public static MethodInfo GetPublicStaticMethod(this Type type, string methodName)
+        {
+            return GetPublicStaticMethod(type, methodName, null);
+        }
+
+        public static MethodInfo GetPublicStaticMethod(this Type type, string methodName, Type[] types)
+#else
         public static MethodInfo GetPublicStaticMethod(this Type type, string methodName, Type[] types = null)
+#endif
         {
 #if NETFX_CORE
             return type.GetRuntimeMethod(methodName, types);
@@ -928,7 +1035,16 @@ namespace ServiceStack.Text
 #endif
         }
 
+#if NETCF
+        public static MethodInfo GetMethodInfo(this Type type, string methodName)
+        {
+            return GetMethodInfo(type, methodName, null);
+        }
+
+        public static MethodInfo GetMethodInfo(this Type type, string methodName, Type[] types)
+#else
         public static MethodInfo GetMethodInfo(this Type type, string methodName, Type[] types = null)
+#endif
         {
 #if NETFX_CORE
             return type.GetRuntimeMethods().First(p => p.Name.Equals(methodName));
@@ -939,7 +1055,16 @@ namespace ServiceStack.Text
 #endif
         }
 
+#if NETCF
+        public static object InvokeMethod(this Delegate fn, object instance)
+        {
+            return InvokeMethod(fn, instance, null);
+        }
+
+        public static object InvokeMethod(this Delegate fn, object instance, object[] parameters)
+#else
         public static object InvokeMethod(this Delegate fn, object instance, object[] parameters = null)
+#endif
         {
 #if NETFX_CORE
             return fn.GetMethodInfo().Invoke(instance, parameters ?? new object[] { });
@@ -957,6 +1082,7 @@ namespace ServiceStack.Text
 #endif
         }
 
+#if !NETCF
         public static Delegate MakeDelegate(this MethodInfo mi, Type delegateType, bool throwOnBindFailure=true)
         {
 #if NETFX_CORE
@@ -965,6 +1091,18 @@ namespace ServiceStack.Text
             return Delegate.CreateDelegate(delegateType, mi, throwOnBindFailure);
 #endif
         }
+#elif NETCF
+        public static Delegate MakeDelegate(this MethodInfo mi, Type delegateType)
+        {
+            return MakeDelegate(mi, delegateType, true);
+        }
+
+        public static Delegate MakeDelegate(this MethodInfo mi, Type delegateType, bool throwOnBindFailure)
+        {
+            // TODO NETCF check this hack method
+            return Delegate.CreateDelegate(delegateType, null, mi);
+        }
+#endif
 
         public static Type[] GenericTypeArguments(this Type type)
         {
@@ -1039,7 +1177,16 @@ namespace ServiceStack.Text
 #endif
         }
 
+#if NETCF
+        public static MethodInfo SetMethod(this PropertyInfo pi)
+        {
+            return SetMethod(pi, true);
+        }
+
+        public static MethodInfo SetMethod(this PropertyInfo pi, bool nonPublic)
+#else
         public static MethodInfo SetMethod(this PropertyInfo pi, bool nonPublic = true)
+#endif
         {
 #if NETFX_CORE
             return pi.SetMethod;
@@ -1048,7 +1195,16 @@ namespace ServiceStack.Text
 #endif
         }
 
+#if NETCF
+        public static MethodInfo GetMethodInfo(this PropertyInfo pi)
+        {
+            return GetMethodInfo(pi, true);
+        }
+
+        public static MethodInfo GetMethodInfo(this PropertyInfo pi, bool nonPublic)
+#else
         public static MethodInfo GetMethodInfo(this PropertyInfo pi, bool nonPublic = true)
+#endif
         {
 #if NETFX_CORE
             return pi.GetMethod;

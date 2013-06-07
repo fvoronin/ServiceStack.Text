@@ -99,6 +99,7 @@ namespace ServiceStack.Text.Jsv
 			writer.Write(DateTimeSerializer.ToShortestXsdDateTimeString((DateTime)dateTime));
 		}
 
+#if !NETCF
 		public void WriteDateTimeOffset(TextWriter writer, object oDateTimeOffset)
 		{
 			writer.Write(((DateTimeOffset) oDateTimeOffset).ToString("o"));
@@ -109,6 +110,7 @@ namespace ServiceStack.Text.Jsv
 			if (dateTimeOffset == null) return;
 			this.WriteDateTimeOffset(writer, dateTimeOffset);
 		}
+#endif
 
         public void WriteTimeSpan(TextWriter writer, object oTimeSpan)
         {
@@ -234,7 +236,7 @@ namespace ServiceStack.Text.Jsv
 
 		public void WriteLinqBinary(TextWriter writer, object linqBinaryValue)
         {
-#if !MONOTOUCH && !SILVERLIGHT && !XBOX  && !ANDROID
+#if !MONOTOUCH && !SILVERLIGHT && !XBOX  && !ANDROID && !NETCF
 			WriteRawString(writer, Convert.ToBase64String(((System.Data.Linq.Binary)linqBinaryValue).ToArray()));
 #endif
         }

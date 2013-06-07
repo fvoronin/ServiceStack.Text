@@ -20,6 +20,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using ServiceStack.Text.Common;
 using ServiceStack.Text.Support;
+
 #if NETFX_CORE
 using System.Threading.Tasks;
 #endif
@@ -29,6 +30,9 @@ using System.IO.IsolatedStorage;
 #if  !WP8
 using ServiceStack.Text.WP;
 #endif
+#endif
+#if NETCF
+using ServiceStack.Text.WP;
 #endif
 
 namespace ServiceStack.Text
@@ -54,7 +58,6 @@ namespace ServiceStack.Text
         {
             return TypeSerializer.DeserializeFromString(value, type);
         }
-
 
         /// <summary>
         /// Converts from base: 0 - 62
@@ -197,7 +200,7 @@ namespace ServiceStack.Text
                     bytes.Add((byte)c);
                 }
             }
-#if SILVERLIGHT
+#if SILVERLIGHT || NETCF
             byte[] byteArray = bytes.ToArray();
             return Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
 #else
@@ -205,7 +208,7 @@ namespace ServiceStack.Text
 #endif
         }
 
-#if !XBOX
+#if !(XBOX)
         public static string HexEscape(this string text, params char[] anyCharOf)
         {
             if (String.IsNullOrEmpty(text)) return text;
@@ -347,6 +350,7 @@ namespace ServiceStack.Text
             return FastToUtf8Bytes(longVal.ToString());
         }
 
+#if !NETCF //TODO make for .NET CF
         public static byte[] ToUtf8Bytes(this double doubleVal)
         {
             var doubleStr = doubleVal.ToString(CultureInfo.InvariantCulture.NumberFormat);
@@ -356,6 +360,7 @@ namespace ServiceStack.Text
 
             return FastToUtf8Bytes(doubleStr);
         }
+#endif
 
         /// <summary>
         /// Skip the encoding process for 'safe strings' 
@@ -464,14 +469,14 @@ namespace ServiceStack.Text
             return CsvSerializer.SerializeToString(obj);
         }
 
-#if !XBOX && !SILVERLIGHT && !MONOTOUCH
+#if !XBOX && !SILVERLIGHT && !MONOTOUCH && !NETCF
         public static string ToXml<T>(this T obj)
         {
             return XmlSerializer.SerializeToString(obj);
         }
 #endif
 
-#if !XBOX && !SILVERLIGHT && !MONOTOUCH
+#if !XBOX && !SILVERLIGHT && !MONOTOUCH && !NETCF
         public static T FromXml<T>(this string json)
         {
             return XmlSerializer.DeserializeFromString<T>(json);
@@ -511,8 +516,8 @@ namespace ServiceStack.Text
 
         public static string ReadAllText(this string filePath)
         {
-#if XBOX && !SILVERLIGHT
-            using( var fileStream = new FileStream( filePath, FileMode.Open, FileAccess.Read ) )
+#if (XBOX || NETCF) && !SILVERLIGHT
+            using ( var fileStream = new FileStream( filePath, FileMode.Open, FileAccess.Read ) )
             {
                 return new StreamReader( fileStream ).ReadToEnd( ) ;
             }
@@ -705,7 +710,7 @@ namespace ServiceStack.Text
 
             return value.Length > startIndex ? value.Substring(startIndex) : String.Empty;
         }
-
+#if !NETCF
         public static bool IsAnonymousType(this Type type)
         {
             if (type == null)
@@ -722,7 +727,7 @@ namespace ServiceStack.Text
                 && (type.Attributes & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
 #endif
         }
-        
+#endif        
         public static int CompareIgnoreCase(this string strA, string strB)
         {
             return String.Compare(strA, strB, InvariantComparisonIgnoreCase());

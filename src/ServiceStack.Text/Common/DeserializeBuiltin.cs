@@ -56,20 +56,26 @@ namespace ServiceStack.Text.Common
                 return value => DateTimeSerializer.ParseShortestNullableXsdDateTime(value);
             if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(DateTime?))
                 return value => DateTimeSerializer.ParseShortestXsdDateTime(value);
+#if !NETCF
             if (typeof(T) == typeof(DateTimeOffset) || typeof(T) == typeof(DateTimeOffset?))
                 return value => DateTimeSerializer.ParseDateTimeOffset(value);
+#endif
             if (typeof(T) == typeof(TimeSpan))
                 return value => DateTimeSerializer.ParseTimeSpan(value);
             if (typeof(T) == typeof(TimeSpan?))
                 return value => DateTimeSerializer.ParseNullableTimeSpan(value);
-#if !MONOTOUCH && !SILVERLIGHT && !XBOX && !ANDROID
+#if !MONOTOUCH && !SILVERLIGHT && !XBOX && !ANDROID && !NETCF
             if (typeof(T) == typeof(System.Data.Linq.Binary))
                 return value => new System.Data.Linq.Binary(Convert.FromBase64String(value));
 #endif
             if (typeof(T) == typeof(char))
             {
                 char cValue;
+#if !NETCF
                 return value => char.TryParse(value, out cValue) ? cValue : '\0';
+#else
+                return value => ParseAssistant.TryParse(value, out cValue) ? cValue : '\0';
+#endif
             }
             if (typeof(T) == typeof(ushort))
                 return value => ushort.Parse(value);
@@ -111,7 +117,11 @@ namespace ServiceStack.Text.Common
             if (typeof(T) == typeof(char?))
             {
                 char cValue;
+#if !NETCF
                 return value => string.IsNullOrEmpty(value) ? (char?)null : char.TryParse(value, out cValue) ? cValue : '\0';
+#else
+                return value => string.IsNullOrEmpty(value) ? (char?)null : ParseAssistant.TryParse(value, out cValue) ? cValue : '\0';
+#endif
             }
 
             return null;

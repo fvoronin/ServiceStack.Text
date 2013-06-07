@@ -98,8 +98,7 @@ namespace ServiceStack.Text
 
 			return null;
 		}
-
-	}
+    }
 
 	public class ConvertibleTypeKey
 	{

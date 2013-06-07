@@ -46,7 +46,7 @@ namespace ServiceStack.Text.Common
                 return GetGenericStackParseFn();
             }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !NETCF
             if (typeof(T) == typeof(StringCollection))
             {
                 return ParseStringCollection<TSerializer>;
@@ -72,7 +72,7 @@ namespace ServiceStack.Text.Common
             return new Queue<int>(parse);
         }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !NETCF
         public static StringCollection ParseStringCollection<TS>(string value) where TS : ITypeSerializer
         {
             if ((value = DeserializeListWithElements<TS>.StripList(value)) == null) return null;
@@ -184,7 +184,11 @@ namespace ServiceStack.Text.Common
                 {
                     ConvertFn = fromObject =>
                     {
+#if !NETCF
                         var to = Activator.CreateInstance(typeof(TCollection), fromObject);
+#else
+                        var to = typeof (TCollection).GetConstructor(new Type[] {fromObject.GetType()}).Invoke(new[] {fromObject});
+#endif
                         return to;
                     };
                     return;

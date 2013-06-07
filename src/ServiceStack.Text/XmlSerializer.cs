@@ -19,12 +19,17 @@ namespace ServiceStack.Text
 
         public static XmlSerializer Instance
             = new XmlSerializer(
-#if !SILVERLIGHT && !WINDOWS_PHONE && !MONOTOUCH
+#if !SILVERLIGHT && !WINDOWS_PHONE && !MONOTOUCH && !NETCF
                 new XmlDictionaryReaderQuotas { MaxStringContentLength = 1024 * 1024, }
 #endif
 );
 
+#if NETCF
+        public XmlSerializer() : this(null, false) { }
+        public XmlSerializer(XmlDictionaryReaderQuotas quotas, bool omitXmlDeclaration)
+#else
         public XmlSerializer(XmlDictionaryReaderQuotas quotas=null, bool omitXmlDeclaration = false)
+#endif
         {
             this.quotas = quotas;
             XSettings.Encoding = new UTF8Encoding(false);

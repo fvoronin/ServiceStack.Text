@@ -12,12 +12,14 @@ namespace ServiceStack.Text
         bool disposed;
         JsConfigScope parent;
 
+#if !NETCF
         [ThreadStatic]
+#endif
         private static JsConfigScope head;
 
         internal JsConfigScope()
         {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !NETCF
             Thread.BeginThreadAffinity();
 #endif
             parent = head;
@@ -49,7 +51,7 @@ namespace ServiceStack.Text
                 Debug.Assert(this == head, "Disposed out of order.");
 
                 head = parent;
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !NETCF
                 Thread.EndThreadAffinity();
 #endif
             }

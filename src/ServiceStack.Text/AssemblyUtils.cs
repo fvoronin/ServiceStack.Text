@@ -41,9 +41,13 @@ namespace ServiceStack.Text
             if (type == null)
             {
                 var typeDef = new AssemblyTypeDefinition(typeName);
-                type = !string.IsNullOrEmpty(typeDef.AssemblyName) 
-                    ? FindType(typeDef.TypeName, typeDef.AssemblyName) 
+                type = !string.IsNullOrEmpty(typeDef.AssemblyName)
+                           ? FindType(typeDef.TypeName, typeDef.AssemblyName)
+#if !NETCF
                     : FindTypeFromLoadedAssemblies(typeDef.TypeName);
+#else
+                    : null;
+#endif
             }
 
             Dictionary<string, Type> snapshot, newCache;
@@ -93,12 +97,13 @@ namespace ServiceStack.Text
         /// <returns>The type if it exists</returns>
         public static Type FindType(string typeName, string assemblyName)
         {
+#if !NETCF
             var type = FindTypeFromLoadedAssemblies(typeName);
             if (type != null)
             {
                 return type;
             }
-
+#endif
 #if !NETFX_CORE
             var binPath = GetAssemblyBinPath(Assembly.GetExecutingAssembly());
             Assembly assembly = null;
@@ -165,7 +170,7 @@ namespace ServiceStack.Text
         }
 #endif
 
-#if !XBOX
+#if !XBOX && !NETCF
         public static Type FindTypeFromLoadedAssemblies(string typeName)
         {
 #if SILVERLIGHT4
@@ -213,7 +218,7 @@ namespace ServiceStack.Text
 #if !XBOX
         public static string GetAssemblyBinPath(Assembly assembly)
         {
-#if WINDOWS_PHONE
+#if WINDOWS_PHONE || NETCF
             var codeBase = assembly.GetName().CodeBase;
 #elif NETFX_CORE
             var codeBase = assembly.GetName().FullName;

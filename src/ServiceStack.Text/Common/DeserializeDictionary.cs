@@ -168,7 +168,11 @@ namespace ServiceStack.Text.Common
 
             var to = (createMapType == null)
                 ? new Dictionary<TKey, TValue>()
+#if !NETCF
                 : (IDictionary<TKey, TValue>)createMapType.CreateInstance();
+#else
+                : (IDictionary<TKey, TValue>)Activator.CreateInstance(createMapType);
+#endif
 
             if (JsonTypeSerializer.IsEmptyMap(value, index)) return to;
 

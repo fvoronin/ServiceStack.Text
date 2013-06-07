@@ -18,12 +18,11 @@ namespace ServiceStack.Text
 		    platformName = Environment.OSVersion.Platform.ToString();
 #endif
 
+#if !NETCF
             IsMono = AssemblyUtils.FindType("Mono.Runtime") != null;
-
             IsMonoTouch = AssemblyUtils.FindType("MonoTouch.Foundation.NSObject") != null;
-
             IsWinRT = AssemblyUtils.FindType("Windows.ApplicationModel") != null;
-
+#endif
 			SupportsExpressions = SupportsEmit = !IsMonoTouch;
 
             ServerUserAgent = "ServiceStack/" +

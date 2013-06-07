@@ -14,18 +14,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+#if !NETCF
 using ServiceStack.Text.Common;
+#endif
 
 namespace ServiceStack.Text
 {
 	public static class ListExtensions
 	{
+#if !NETCF
 		public static string Join<T>(this IEnumerable<T> values)
 		{
 			return Join(values, JsWriter.ItemSeperatorString);
 		}
+#endif
 
-		public static string Join<T>(this IEnumerable<T> values, string seperator)
+        public static string Join<T>(this IEnumerable<T> values, string seperator)
 		{
 			var sb = new StringBuilder();
 			foreach (var value in values)
