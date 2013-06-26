@@ -4,12 +4,25 @@ using NUnit.Framework;
 #if !MONOTOUCH
 using ServiceStack.Common.Tests.Models;
 #endif
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+#endif
 
 namespace ServiceStack.Text.Tests
 {
+#if NETCF
+    [TestClass]
+#endif
     [TestFixture]
     public class NullableTypesTests
     {
+#if NETCF
+        [TestInitialize]
+#endif
         [SetUp]
         public void SetUp()
         {
@@ -17,6 +30,9 @@ namespace ServiceStack.Text.Tests
         }
 
 #if !MONOTOUCH
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_Serialize_populated_model_of_NullableTypes()
         {
@@ -29,6 +45,9 @@ namespace ServiceStack.Text.Tests
             ModelWithFieldsOfNullableTypes.AssertIsEqual(model, fromJson);
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_Serialize_empty_model_of_NullableTypes()
         {
@@ -42,6 +61,9 @@ namespace ServiceStack.Text.Tests
         }
 #endif
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Serialize_array_with_null_should_always_produce_Valid_JSON()
         {
@@ -72,6 +94,9 @@ namespace ServiceStack.Text.Tests
             public List<Answer> Items { get; set; }
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_handle_null_in_quotes_in_TopAnswers()
         {
@@ -105,6 +130,9 @@ namespace ServiceStack.Text.Tests
             public Guid? GuidValue { get; set; }
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
 		public void Test_override_DeserializeFn()
 		{
@@ -125,6 +153,9 @@ namespace ServiceStack.Text.Tests
             }
 		}
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_handle_null_in_Answer()
         {
@@ -134,6 +165,9 @@ namespace ServiceStack.Text.Tests
             Assert.That(fromJson.tag_name, Is.Null);
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_handle_null_in_quotes_in_Answer()
         {
@@ -156,6 +190,9 @@ namespace ServiceStack.Text.Tests
             Assert.That(fromJson.tag_name, Is.EqualTo("null"));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Deserialize_WithNullCollection_CollectionIsNull()
         {

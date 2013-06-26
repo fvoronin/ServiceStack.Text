@@ -478,16 +478,19 @@ namespace ServiceStack.Text
             var publicProperties = GetPublicProperties(type);
             var publicReadableProperties = publicProperties.Where(x => x.PropertyGetMethod() != null);
 
-#if !NETCF
             if (type.IsDto())
             {
+#if !NETCF
                 return !Env.IsMono
                     ? publicReadableProperties.Where(attr => 
                         attr.IsDefined(typeof(DataMemberAttribute), false)).ToArray()
                     : publicReadableProperties.Where(attr => 
                         attr.CustomAttributes(false).Any(x => x.GetType().Name == DataMember)).ToArray();
-            }
+#else
+                return publicReadableProperties.Where(attr => 
+                        attr.CustomAttributes(false).Any(x => x.GetType().Name == DataMember)).ToArray();
 #endif
+            }
 
             // else return those properties that are not decorated with IgnoreDataMember
             return publicReadableProperties.Where(prop => !prop.CustomAttributes(false).Any(attr => attr.GetType().Name == IgnoreDataMember)).ToArray();
@@ -591,6 +594,18 @@ namespace ServiceStack.Text
             return null;
         }
 #endif
+#else
+        public static DataContractAttribute GetDataContract(this Type type)
+        {
+            var dataContract = type.CustomAttributes(true).FirstOrDefault(x => x.GetType().Name == DataContract) as DataContractAttribute;
+            return dataContract;
+        }
+
+        public static DataMemberAttribute GetDataMember(this PropertyInfo pi)
+        {
+            var dataMember = pi.CustomAttributes(false).FirstOrDefault(x => x.GetType().Name == DataMember) as DataMemberAttribute;
+            return dataMember;
+        }
 #endif
     }
 
@@ -787,24 +802,19 @@ namespace ServiceStack.Text
 #endif
         }
 
-#if !NETCF
         const string DataContract = "DataContractAttribute";
         public static bool IsDto(this Type type)
         {
 #if NETFX_CORE
             return type.GetTypeInfo().IsDefined(typeof(DataContractAttribute), false);
+#elif NETCF
+            return type.GetCustomAttributes(true).Any(x => x.GetType().Name == DataContract);
 #else
             return !Env.IsMono
                    ? type.IsDefined(typeof(DataContractAttribute), false)
                    : type.GetCustomAttributes(true).Any(x => x.GetType().Name == DataContract);
 #endif
         }
-#else
-        public static bool IsDto(this Type type)
-        {
-            return false; // TODO NETCF IsDto is always false 
-        }
-#endif
 
 #if NETCF
         public static MethodInfo PropertyGetMethod(this PropertyInfo pi)

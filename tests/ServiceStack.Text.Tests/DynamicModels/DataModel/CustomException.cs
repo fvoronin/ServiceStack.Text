@@ -18,8 +18,10 @@ namespace ServiceStack.Text.Tests.DynamicModels.DataModel
 		{
 		}
 
+#if !NETCF
 		protected CustomException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}
+#endif
 	}
 }

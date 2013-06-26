@@ -3,15 +3,29 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using ServiceStack.Common.Tests.Models;
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+using TestCleanupAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+#endif
 
 namespace ServiceStack.Text.Tests
 {
-	[TestFixture]
+#if NETCF
+    [TestClass]
+#endif
+    [TestFixture]
 	public class GenericCollectionTests
 		: TestBase
 	{
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_Queue_string()
 		{
 			var queue = new Queue<string>();
@@ -25,7 +39,10 @@ namespace ServiceStack.Text.Tests
 			Assert.That(CsvSerializer.SerializeToString(queue), Is.EqualTo("one,two,three" + Environment.NewLine));
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_Queue_int()
 		{
 			var queue = new Queue<int>();
@@ -39,7 +56,10 @@ namespace ServiceStack.Text.Tests
 			Assert.That(CsvSerializer.SerializeToString(queue), Is.EqualTo("1,2,3" + Environment.NewLine));
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_Queue_Generic()
 		{
 			var queue = new Queue<ModelWithIdAndName>();
@@ -63,7 +83,10 @@ namespace ServiceStack.Text.Tests
 				));
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_Stack_string()
 		{
 			var stack = new Stack<string>();
@@ -77,7 +100,10 @@ namespace ServiceStack.Text.Tests
 			Assert.That(CsvSerializer.SerializeToString(stack), Is.EqualTo("three,two,one" + Environment.NewLine));
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_Stack_int()
 		{
 			var stack = new Stack<int>();
@@ -91,7 +117,10 @@ namespace ServiceStack.Text.Tests
 			Assert.That(CsvSerializer.SerializeToString(stack), Is.EqualTo("3,2,1" + Environment.NewLine));
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_Stack_Generic()
 		{
 			var stack = new Stack<ModelWithIdAndName>();

@@ -46,6 +46,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
+    <Reference Include="ServiceStack.Interfaces.Compact, Version=1.0.4909.40217, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\tests\.NETCF\ServiceStack.Interfaces.Compact.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
@@ -250,6 +254,7 @@
     <Compile Include="..\ServiceStack.Text\XmlSerializer.cs">
       <Link>XmlSerializer.cs</Link>
     </Compile>
+    <Compile Include="Common\DelegateCreator.cs" />
     <Compile Include="System.Runtime.Serialization.DataContractSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ParseAssistant.cs" />

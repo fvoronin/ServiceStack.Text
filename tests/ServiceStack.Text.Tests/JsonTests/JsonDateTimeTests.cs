@@ -3,24 +3,43 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using NUnit.Framework;
-#if !MONOTOUCH
+#if !MONOTOUCH && !NETCF
 using ServiceStack.Client;
+#endif
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestCleanupAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
 #endif
 
 namespace ServiceStack.Text.Tests.JsonTests
 {
-	public class JsonDateTimeTests
+    public class JsonDateTimeTests
 	{
 	    private string _localTimezoneOffset;
 
+#if NETCF
+        [TestInitialize]
+#endif
         [SetUp]
         public void SetUp()
         {
             JsConfig.Reset();
+#if !NETCF
             _localTimezoneOffset = TimeZoneInfo.Local.BaseUtcOffset.Hours.ToString("00") + TimeZoneInfo.Local.BaseUtcOffset.Minutes.ToString("00");
+#else
+            _localTimezoneOffset = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now).Hours.ToString("00") +
+                                   TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now).Minutes.ToString("00");
+#endif
         }
 
 		#region TimestampOffset Tests
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void When_using_TimestampOffset_and_serializing_as_Utc_It_should_deserialize_as_Utc()
         {
@@ -34,7 +53,10 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.AreEqual(initialDate, deserializedDate);
         }
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_json_date_timestampOffset_utc()
 		{
 			JsConfig.DateHandler = JsonDateHandler.TimestampOffset;
@@ -46,7 +68,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			JsConfig.Reset();
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_json_date_timestampOffset_local()
 		{
 			JsConfig.DateHandler = JsonDateHandler.TimestampOffset;
@@ -54,7 +79,11 @@ namespace ServiceStack.Text.Tests.JsonTests
 			var dateTime = new DateTime(1994, 11, 24, 0, 0, 0, DateTimeKind.Local);
 			var ssJson = JsonSerializer.SerializeToString(dateTime);
 
+#if !NETCF
 			var offsetSpan = TimeZoneInfo.Local.GetUtcOffset(dateTime);
+#else
+			var offsetSpan = TimeZone.CurrentTimeZone.GetUtcOffset(dateTime);
+#endif
 			var ticks = 785635200000 - offsetSpan.TotalMilliseconds;
 			var offset = offsetSpan.ToTimeOffsetString();
 
@@ -62,7 +91,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			JsConfig.Reset();
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_json_date_timestampOffset_unspecified()
 		{
 			JsConfig.DateHandler = JsonDateHandler.TimestampOffset;
@@ -75,8 +107,11 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(ssJson1, Is.EqualTo(@"""\/Date(785653200000-0000)\/"""));
 			JsConfig.Reset();
 		}
-        
-		[Test]
+
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_deserialize_json_date_timestampOffset_withoutOffset_asUtc()
 		{
 			JsConfig.DateHandler = JsonDateHandler.TimestampOffset;
@@ -90,7 +125,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			JsConfig.Reset();
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_deserialize_json_date_timestampOffset_withOffset_asUnspecified()
 		{
 			JsConfig.DateHandler = JsonDateHandler.TimestampOffset;
@@ -104,7 +142,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			JsConfig.Reset();
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_deserialize_json_date_timestampOffset_withZeroOffset_asUnspecified()
 		{
 			JsConfig.DateHandler = JsonDateHandler.TimestampOffset;
@@ -121,6 +162,9 @@ namespace ServiceStack.Text.Tests.JsonTests
 		#endregion
 
         #region TimeSpan Tests
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void JsonSerializerReturnsTimeSpanAsString()
         {
@@ -128,6 +172,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.AreEqual("\"PT0.0000001S\"", JsonSerializer.SerializeToString(new TimeSpan(1)));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void JsonDeserializerReturnsTimeSpanFromString()
         {
@@ -137,6 +184,9 @@ namespace ServiceStack.Text.Tests.JsonTests
         #endregion
 
         #region DCJS Compatibility Tests
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
 		public void Can_serialize_json_date_dcjsCompatible_utc()
 		{
@@ -150,7 +200,7 @@ namespace ServiceStack.Text.Tests.JsonTests
 			JsConfig.Reset();
 		}
 
-#if !__MonoCS__
+#if !__MonoCS__ && !NETCF
 		[Test]
 		public void Can_serialize_json_date_dcjsCompatible_local()
 		{
@@ -178,7 +228,7 @@ namespace ServiceStack.Text.Tests.JsonTests
 		}
 #endif
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !NETCF
 		[Test]
 		public void Can_deserialize_json_date_dcjsCompatible_utc()
 		{
@@ -227,6 +277,9 @@ namespace ServiceStack.Text.Tests.JsonTests
 		#endregion
 
 		#region ISO-8601 Tests
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void When_using_ISO8601_and_serializing_as_Utc_It_should_deserialize_as_Utc()
         {
@@ -241,7 +294,10 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.AreEqual(initialDate, deserializedDate);
         }
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_json_date_iso8601_utc()
 		{
 			JsConfig.DateHandler = JsonDateHandler.ISO8601;
@@ -253,7 +309,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			JsConfig.Reset();
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_json_date_iso8601_local()
 		{
 			JsConfig.DateHandler = JsonDateHandler.ISO8601;
@@ -261,14 +320,21 @@ namespace ServiceStack.Text.Tests.JsonTests
 			var dateTime = new DateTime(1994, 11, 24, 12, 34, 56, DateTimeKind.Local);
 			var ssJson = JsonSerializer.SerializeToString(dateTime);
 
+#if !NETCF
 			var offsetSpan = TimeZoneInfo.Local.GetUtcOffset(dateTime);
+#else
+			var offsetSpan = TimeZone.CurrentTimeZone.GetUtcOffset(dateTime);
+#endif
 			var offset = offsetSpan.ToTimeOffsetString(":");
 
 			Assert.That(ssJson, Is.EqualTo(@"""1994-11-24T12:34:56.0000000" + offset + @""""));
 			JsConfig.Reset();
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_json_date_iso8601_unspecified()
 		{
 			JsConfig.DateHandler = JsonDateHandler.ISO8601;
@@ -280,7 +346,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			JsConfig.Reset();
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_deserialize_json_date_iso8601_withZOffset_asUtc()
 		{
 			JsConfig.DateHandler = JsonDateHandler.ISO8601;
@@ -294,7 +363,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			JsConfig.Reset();
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_deserialize_json_date_iso8601_withoutOffset_asUnspecified()
 		{
 			JsConfig.DateHandler = JsonDateHandler.ISO8601;
@@ -308,13 +380,20 @@ namespace ServiceStack.Text.Tests.JsonTests
 			JsConfig.Reset();
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_deserialize_json_date_iso8601_withOffset_asLocal()
 		{
 			JsConfig.DateHandler = JsonDateHandler.ISO8601;
 
 			var dateTime = new DateTime(1994, 11, 24, 12, 34, 56, DateTimeKind.Local);
+#if !NETCF
 			var offset = TimeZoneInfo.Local.GetUtcOffset(dateTime).ToTimeOffsetString(":");
+#else
+			var offset = TimeZone.CurrentTimeZone.GetUtcOffset(dateTime).ToTimeOffsetString(":");
+#endif
 
 			var json = @"""1994-11-24T12:34:56" + offset + @"""";
 			var fromJson = JsonSerializer.DeserializeFromString<DateTime>(json);
@@ -327,6 +406,7 @@ namespace ServiceStack.Text.Tests.JsonTests
 
 		#endregion
 
+#if !NETCF
 		#region ISO-8601 TimeStampOffset Tests
 		[Test]
 		public void Can_serialize_json_datetimeoffset_iso8601_utc()
@@ -447,7 +527,12 @@ namespace ServiceStack.Text.Tests.JsonTests
             date.ToJson().Print();
         }
 
-	    [Test]
+#endif
+
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 	    public void ToUnixTimeTests()
 	    {
 	        var dates = new[]

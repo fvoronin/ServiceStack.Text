@@ -3,12 +3,24 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using NUnit.Framework;
-using ServiceStack.Common.Extensions;
+using ServiceStack.Common;
 using ServiceStack.Common.Tests.Models;
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using ClassCleanupAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute;
+using TestCleanupAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+#endif
 
 namespace ServiceStack.Text.Tests.JsonTests
 {
-	[TestFixture]
+#if NETCF
+    [TestClass]
+#endif
+    [TestFixture]
 	public class EscapedCharsTests
 		: TestBase
 	{
@@ -19,13 +31,19 @@ namespace ServiceStack.Text.Tests.JsonTests
 			public ModelWithIdAndName Model { get; set; }
 		}
 
+#if NETCF
+        [ClassCleanup]
+#endif
         [TearDown]
-        public void TearDown()
+        public static void TearDown()
         {
             JsConfig.Reset();
         }
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_deserialize_text_with_escaped_chars()
 		{
 			var model = new ModelWithIdAndName
@@ -37,7 +55,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			SerializeAndCompare(model);
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_short_circuit_string_with_no_escape_chars()
 		{
 			var model = new ModelWithIdAndName
@@ -49,7 +70,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			SerializeAndCompare(model);
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_deserialize_json_with_whitespace()
 		{
 			var model = new ModelWithIdAndName
@@ -75,7 +99,10 @@ namespace ServiceStack.Text.Tests.JsonTests
             public Inner[] Inner { get; set; }
         }
 
-	    [Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 	    public void Can_deserialize_inner_whitespace()
 	    {
             var fromJson = JsonSerializer.DeserializeFromString<Program>("{\"Inner\":[{\"Int\":0} , {\"Int\":1}\r\n]}");
@@ -89,7 +116,10 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(json, Is.EqualTo(@"{""Inner"":[{""Int"":0}]}"));
         }
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_deserialize_nested_json_with_whitespace()
 		{
 			var model = new NestedModel
@@ -146,6 +176,9 @@ namespace ServiceStack.Text.Tests.JsonTests
 			}
 		}
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialize_Model_with_array()
         {
@@ -157,6 +190,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             SerializeAndCompare(model);
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialize_Model_with_list()
         {
@@ -168,6 +204,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             SerializeAndCompare(model);
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialize_Model_with_array_of_escape_chars()
         {
@@ -179,6 +218,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             SerializeAndCompare(model);
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialize_Model_with_list_of_escape_chars()
         {
@@ -190,7 +232,10 @@ namespace ServiceStack.Text.Tests.JsonTests
             SerializeAndCompare(model);
         }
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_deserialize_json_list_with_whitespace()
 		{
 			var model = new ModelWithList
@@ -208,7 +253,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			Assert.That(fromJson, Is.EqualTo(model));
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_deserialize_basic_latin_unicode()
 		{
 			const string json = "{\"Id\":1,\"Name\":\"\\u0041 \\u0042 \\u0043 | \\u0031 \\u0032 \\u0033\"}";
@@ -220,6 +268,9 @@ namespace ServiceStack.Text.Tests.JsonTests
 			Assert.That(fromJson, Is.EqualTo(model));
 		}
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialize_unicode_without_escape()
         {
@@ -228,6 +279,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(toJson, Is.EqualTo("{\"Name\":\"JříАбвĀašū\"}"));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_deserialize_unicode_without_escape()
         {
@@ -235,6 +289,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(fromJson.Name, Is.EqualTo("JříАбвĀašū"));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialize_unicode_with_escape()
         {
@@ -244,6 +301,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(toJson, Is.EqualTo("{\"Name\":\"J\\u0159\\u00ED\\u0410\\u0431\\u0432\\u0100a\\u0161\\u016B\"}"));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_deserialize_unicode_with_escape()
         {

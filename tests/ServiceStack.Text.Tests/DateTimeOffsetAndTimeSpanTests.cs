@@ -3,10 +3,21 @@ using NUnit.Framework;
 #if !MONOTOUCH
 using ServiceStack.ServiceModel.Serialization;
 #endif
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+#endif
+
 
 namespace ServiceStack.Text.Tests
 {
     [TestFixture]
+#if NETCF
+    [TestClass]
+#endif
     public class DateTimeOffsetAndTimeSpanTests : TestBase
     {
 #if !MONOTOUCH
@@ -23,6 +34,7 @@ namespace ServiceStack.Text.Tests
         }
 #endif
 
+#if !NETCF
         [Test]
         public void Can_Serializable_DateTimeOffset_Field()
         {
@@ -42,8 +54,12 @@ namespace ServiceStack.Text.Tests
 
             Serialize(fromJson);
         }
+#endif
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_serialize_TimeSpan_field()
         {
             var fromDate = new DateTime(2069, 01, 02);
@@ -64,7 +80,13 @@ namespace ServiceStack.Text.Tests
         [Test]
         public void Can_serialize_TimeSpan_field_with_StandardTimeSpanFormat()
         {
+#if NETCF // TODO NETCF make perfect
+            using (JsConfig.With(null, null, null, null, null, null, null, null,
+                JsonTimeSpanHandler.StandardFormat,
+                null, null, null, null, null, null, null, null, null, null, null))
+#else
             using (JsConfig.With(timeSpanHandler:JsonTimeSpanHandler.StandardFormat))
+#endif
             {
                 var period = TimeSpan.FromSeconds(70);
 
@@ -77,7 +99,13 @@ namespace ServiceStack.Text.Tests
         [Test]
         public void Can_serialize_NullableTimeSpan_field_with_StandardTimeSpanFormat()
         {
-            using (JsConfig.With(timeSpanHandler: JsonTimeSpanHandler.StandardFormat))
+#if NETCF // TODO NETCF make perfect
+            using (JsConfig.With(null, null, null, null, null, null, null, null,
+                JsonTimeSpanHandler.StandardFormat,
+                null, null, null, null, null, null, null, null, null, null, null))
+#else
+            using (JsConfig.With(timeSpanHandler:JsonTimeSpanHandler.StandardFormat))
+#endif
             {
                 var period = TimeSpan.FromSeconds(70);
 
@@ -90,7 +118,13 @@ namespace ServiceStack.Text.Tests
         [Test]
         public void Can_serialize_NullTimeSpan_field_with_StandardTimeSpanFormat()
         {
-            using (JsConfig.With(timeSpanHandler: JsonTimeSpanHandler.StandardFormat))
+#if NETCF // TODO NETCF make perfect
+            using (JsConfig.With(null, null, null, null, null, null, null, null,
+                JsonTimeSpanHandler.StandardFormat,
+                null, null, null, null, null, null, null, null, null, null, null))
+#else
+            using (JsConfig.With(timeSpanHandler:JsonTimeSpanHandler.StandardFormat))
+#endif
             {
                 var model = new NullableSampleModel { Id = 1 };
                 var json = JsonSerializer.SerializeToString(model);
@@ -102,7 +136,9 @@ namespace ServiceStack.Text.Tests
         {
             public int Id { get; set; }
 
+#if !NETCF
             public DateTimeOffset Date { get; set; }
+#endif
             public TimeSpan TimeSpan { get; set; }
         }
 
@@ -110,7 +146,9 @@ namespace ServiceStack.Text.Tests
         {
             public int Id { get; set; }
 
+#if !NETCF
             public DateTimeOffset Date { get; set; }
+#endif
             public TimeSpan? TimeSpan { get; set; }
         }
     }

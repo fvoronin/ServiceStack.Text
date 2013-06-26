@@ -4,10 +4,21 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using NUnit.Framework;
 using ServiceStack.Text.Tests.DynamicModels;
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestCleanupAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+#endif
 
 namespace ServiceStack.Text.Tests.JsonTests
 {
-	[TestFixture]
+#if NETCF
+    [TestClass]
+#endif
+    [TestFixture]
 	public class DictionaryTests
 	{
 		public class EdgeCaseProperties : Dictionary<string, string>
@@ -20,9 +31,11 @@ namespace ServiceStack.Text.Tests.JsonTests
                 get
                 {
                     int value;
-                    return (ContainsKey(Id) && int.TryParse(this[Id], out value))
-                               ? value
-                               : 0;
+#if !NETCF
+                    return (ContainsKey(Id) && int.TryParse(this[Id], out value)) ? value : 0;
+#else
+                    return (ContainsKey(Id) && ParseAssistant.TryParse(this[Id], out value)) ? value : 0;
+#endif
                 }
                 set { this[Id] = value.ToString(CultureInfo.InvariantCulture); }
             }
@@ -35,7 +48,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			}
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_Serialize()
 		{
 			var model = EdgeCaseProperties.Create(1);
@@ -44,7 +60,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			Console.WriteLine(s);
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_Serialize_list()
 		{
 			var model = new List<EdgeCaseProperties>
@@ -57,7 +76,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			Console.WriteLine(s);
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_Serialize_map()
 		{
 			var model = new Dictionary<string, EdgeCaseProperties>
@@ -70,6 +92,9 @@ namespace ServiceStack.Text.Tests.JsonTests
 			Console.WriteLine(s);
 		}
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_Deserialize()
         {
@@ -92,6 +117,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             public List<Tree> Nodes { get; set; }
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void CanSerializeAndDeserializeTree()
         {

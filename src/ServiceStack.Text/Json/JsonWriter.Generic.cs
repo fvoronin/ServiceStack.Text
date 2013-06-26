@@ -128,7 +128,7 @@ namespace ServiceStack.Text.Json
 		}
 	}
 
-	internal class TypeInfo
+    internal class TypeInfo
 	{
 		internal bool EncodeMapKey;
 	}

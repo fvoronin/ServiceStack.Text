@@ -1,21 +1,39 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+#endif
 
 namespace ServiceStack.Text.Tests
 {
 	[TestFixture]
+#if NETCF
+    [TestClass]
+#endif
 	public class AnonymousTypes
 		: TestBase
 	{
-		[Test]
-		public void Can_serialize_anonymous_types()
+#if NETCF
+        [TestMethod]
+        [Ignore] // .NET CF does not completely support anonymous type
+#endif
+        [Test]
+        public void Can_serialize_anonymous_types()
 		{
-			Serialize(new { Id = 1, Name = "Name", IntList = new[] { 1, 2, 3 } }, includeXml: false); // xmlserializer cannot serialize anonymous types.
+		    System.Diagnostics.Debugger.Break();
+			Serialize(new { Id = 1, Name = "Name", IntList = new[] { 1, 2, 3 } }, /*includeXml:*/ false); // xmlserializer cannot serialize anonymous types.
 		}
 
-		[Test]
-		public void Can_serialize_anonymous_type_and_read_as_string_Dictionary()
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
+        public void Can_serialize_anonymous_type_and_read_as_string_Dictionary()
 		{
 			var json = JsonSerializer.SerializeToString(
 				new { Id = 1, Name = "Name", IntList = new[] { 1, 2, 3 } });
@@ -33,6 +51,9 @@ namespace ServiceStack.Text.Tests
             public object Title2 { get; set; }
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Escapes_string_in_object_correctly()
         {

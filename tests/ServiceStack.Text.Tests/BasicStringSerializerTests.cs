@@ -3,17 +3,31 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using NUnit.Framework;
-#if !MONOTOUCH
+#if !MONOTOUCH && !NETCF
 using System.ComponentModel.DataAnnotations;
 using Northwind.Common.ComplexModel;
 using ServiceStack.Common.Extensions;
 using ServiceStack.Common.Tests.Models;
 #endif
 using ServiceStack.Text.Common;
+#if NETCF
+using ServiceStack.Common;
+using ServiceStack.Text.WP;
+using ServiceStack.Common.Tests.Models;
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+#endif
+
 
 namespace ServiceStack.Text.Tests
 {
 	[TestFixture]
+#if NETCF
+    [TestClass]
+#endif
 	public class BasicStringSerializerTests
 	{
 		readonly char[] allCharsUsed = new[] {
@@ -46,7 +60,10 @@ namespace ServiceStack.Text.Tests
         }
 
 		[Test]
-		public void Can_convert_comma_delimited_string_to_List_String()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_comma_delimited_string_to_List_String()
 		{
 			Assert.That(TypeSerializer.CanCreateFromString(typeof(List<string>)), Is.True);
 
@@ -60,7 +77,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Null_or_Empty_string_returns_null()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Null_or_Empty_string_returns_null()
 		{
 			var convertedJsvValues = TypeSerializer.DeserializeFromString<List<string>>(null);
 			Assert.That(convertedJsvValues, Is.EqualTo(null));
@@ -70,14 +90,20 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Empty_list_string_returns_empty_List()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Empty_list_string_returns_empty_List()
 		{
 			var convertedStringValues = TypeSerializer.DeserializeFromString<List<string>>("[]");
 			Assert.That(convertedStringValues, Is.EqualTo(new List<string>()));
 		}
 
 		[Test]
-		public void Null_or_Empty_string_returns_null_Map()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Null_or_Empty_string_returns_null_Map()
 		{
 			var convertedStringValues = TypeSerializer.DeserializeFromString<Dictionary<string, string>>(null);
 			Assert.That(convertedStringValues, Is.EqualTo(null));
@@ -87,14 +113,20 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Empty_map_string_returns_empty_List()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Empty_map_string_returns_empty_List()
 		{
 			var convertedStringValues = TypeSerializer.DeserializeFromString<Dictionary<string, string>>("{}");
 			Assert.That(convertedStringValues, Is.EqualTo(new Dictionary<string, string>()));
 		}
 
 		[Test]
-		public void Can_convert_string_collection()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_string_collection()
 		{
 			Assert.That(TypeSerializer.CanCreateFromString(typeof(string[])), Is.True);
 
@@ -104,7 +136,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_enum()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_enum()
 		{
 			var enumValue = TestEnum.EnumValue1;
 			var stringValue = TypeSerializer.SerializeToString(enumValue);
@@ -113,7 +148,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_nullable_enum()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_nullable_enum()
 		{
 			TestEnum? enumValue = TestEnum.EnumValue1;
 			var stringValue = TypeSerializer.SerializeToString(enumValue);
@@ -122,7 +160,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_to_nullable_enum()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_to_nullable_enum()
 		{
 			Assert.That(TypeSerializer.CanCreateFromString(typeof(TestEnum?)), Is.True);
 
@@ -132,14 +173,20 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_to_nullable_enum_with_null_value()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_to_nullable_enum_with_null_value()
 		{
 			var enumValue = TypeSerializer.DeserializeFromString<TestEnum?>(null);
 			Assert.That(enumValue, Is.Null);
 		}
 
 		[Test]
-		public void Can_convert_nullable_enum_with_null_value()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_nullable_enum_with_null_value()
 		{
 			TestEnum? enumValue = null;
 			var stringValue = TypeSerializer.SerializeToString(enumValue);
@@ -147,6 +194,9 @@ namespace ServiceStack.Text.Tests
 		}
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_convert_unsigned_flags_enum()
         {
             var enumValue = UnsignedFlags.EnumValue1;
@@ -156,7 +206,10 @@ namespace ServiceStack.Text.Tests
         }
 
 		[Test]
-		public void Can_convert_Guid()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_Guid()
 		{
 			Assert.That(TypeSerializer.CanCreateFromString(typeof(Guid)), Is.True);
 
@@ -167,7 +220,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_datetime()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_datetime()
 		{
 			var dateValue = new DateTime(1979, 5, 9);
 			var stringValue = TypeSerializer.SerializeToString(dateValue);
@@ -176,7 +232,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_to_datetime()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_to_datetime()
 		{
 			Assert.That(TypeSerializer.CanCreateFromString(typeof(DateTime)), Is.True);
 
@@ -186,7 +245,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_nullable_datetime()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_nullable_datetime()
 		{
 			DateTime? dateValue = new DateTime(1979, 5, 9);
 			var stringValue = TypeSerializer.SerializeToString(dateValue);
@@ -195,7 +257,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_to_nullable_datetime()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_to_nullable_datetime()
 		{
 			Assert.That(TypeSerializer.CanCreateFromString(typeof(DateTime?)), Is.True);
 
@@ -205,7 +270,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_string_List()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_string_List()
 		{
 			var stringValue = TypeSerializer.SerializeToString(stringValues.ToList());
 			var expectedString = "[" + string.Join(",", stringValues.ToArray()) + "]";
@@ -213,7 +281,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_string_array()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_string_array()
 		{
 			var stringValue = TypeSerializer.SerializeToString(stringValues.ToArray());
 			var expectedString = "[" + string.Join(",", stringValues.ToArray()) + "]";
@@ -221,7 +292,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_string_List_as_object()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_string_List_as_object()
 		{
 			var stringValue = TypeSerializer.SerializeToString((object)stringValues.ToList());
 			var expectedString = "[" + string.Join(",", stringValues.ToArray()) + "]";
@@ -229,7 +303,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_empty_List()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_empty_List()
 		{
 			var stringValue = TypeSerializer.SerializeToString(new List<string>());
 			var expectedString = "[]";
@@ -237,6 +314,9 @@ namespace ServiceStack.Text.Tests
 		}
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_convert_multidimensional_array()
         {
             var data = new double[,] { { 1, 0 }, { 0, 1 } };
@@ -251,7 +331,10 @@ namespace ServiceStack.Text.Tests
         }
 
 		[Test]
-		public void Can_convert_empty_List_as_object()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_empty_List_as_object()
 		{
 			var stringValue = TypeSerializer.SerializeToString((object)new List<string>());
 			var expectedString = "[]";
@@ -259,7 +342,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_string_dictionary()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_string_dictionary()
 		{
 			var stringDictionary = new Dictionary<string, string> 
 				{
@@ -271,7 +357,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_parse_string_dictionary()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_parse_string_dictionary()
 		{
 			var stringDictionary = new Dictionary<string, string> 
 				{
@@ -283,7 +372,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_string_dictionary_as_object()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_string_dictionary_as_object()
 		{
 			var stringDictionary = new Dictionary<string, string> {
 			                                                      	{ "One", "1st" }, { "Two", "2nd" }, { "Three", "3rd" }
@@ -294,7 +386,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_string_dictionary_with_special_chars_as_object()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_string_dictionary_with_special_chars_as_object()
 		{
 			var stringDictionary = new Dictionary<string, string> 
 				{
@@ -308,7 +403,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_parse_string_dictionary_with_special_chars_as_object()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_parse_string_dictionary_with_special_chars_as_object()
 		{
 			var stringDictionary = new Dictionary<string, string> 
 				{
@@ -322,7 +420,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_string_list_with_special_chars_as_object()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_string_list_with_special_chars_as_object()
 		{
 			var stringList = new List<string> 
 				{
@@ -336,7 +437,10 @@ namespace ServiceStack.Text.Tests
         }
 
 		[Test]
-		public void Can_parse_string_list_with_special_chars_as_object()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_parse_string_list_with_special_chars_as_object()
 		{
 			var stringList = new List<string> 
 				{
@@ -350,7 +454,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_Byte_array_with_JsonSerializer()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_Byte_array_with_JsonSerializer()
 		{
 			var byteArrayValue = new byte[] { 0, 65, 97, 255, };
 			var stringValue = JsonSerializer.SerializeToString(byteArrayValue);
@@ -359,7 +466,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_Byte_array()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_Byte_array()
 		{
 			var byteArrayValue = new byte[] { 0, 65, 97, 255, };
 			var stringValue = TypeSerializer.SerializeToString(byteArrayValue);
@@ -368,7 +478,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_to_Byte_array()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_to_Byte_array()
 		{
 			Assert.That(TypeSerializer.CanCreateFromString(typeof(byte[])), Is.True);
 
@@ -395,20 +508,29 @@ namespace ServiceStack.Text.Tests
 #if !MONOTOUCH
 		public class TestClass
 		{
+#if !NETCF
 			[Required]
+#endif
 			public string Member1 { get; set; }
 			
 			public string Member2 { get; set; }
-			
+
+#if !NETCF			
 			[Required]
+#endif
 			public string Member3 { get; set; }
-			
+
+#if !NETCF			
 			[StringLength(1)]
+#endif
 			public string Member4 { get; set; }
 		}
 
 		[Test]
-		public void Can_convert_string_to_List()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_string_to_List()
 		{
 			var fromHashSet = stringValues;
 			var toHashSet = Serialize(fromHashSet);
@@ -417,7 +539,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_string_to_string_HashSet()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_string_to_string_HashSet()
 		{
 			var fromHashSet = new HashSet<string>(stringValues);
 			var toHashSet = Serialize(fromHashSet);
@@ -426,7 +551,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_string_to_int_HashSet()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_string_to_int_HashSet()
 		{
 			var fromHashSet = new HashSet<int>(intValues);
 			var toHashSet = Serialize(fromHashSet);
@@ -435,7 +563,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_string_to_double_HashSet()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_string_to_double_HashSet()
 		{
 			var fromHashSet = new HashSet<double>(doubleValues);
 			var toHashSet = Serialize(fromHashSet);
@@ -444,7 +575,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_string_to_string_ReadOnlyCollection()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_string_to_string_ReadOnlyCollection()
 		{
 			var fromCollection = new ReadOnlyCollection<string>(stringValues);
 			var toCollection = Serialize(fromCollection);
@@ -453,7 +587,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_string_to_int_ReadOnlyCollection()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_string_to_int_ReadOnlyCollection()
 		{
 			var fromCollection = new ReadOnlyCollection<int>(intValues);
 			var toCollection = Serialize(fromCollection);
@@ -462,7 +599,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_string_to_double_ReadOnlyCollection()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_string_to_double_ReadOnlyCollection()
 		{
 			var fromCollection = new ReadOnlyCollection<double>(doubleValues);
 			var toCollection = Serialize(fromCollection);
@@ -471,7 +611,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_ModelWithFieldsOfDifferentTypes()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_ModelWithFieldsOfDifferentTypes()
 		{
 			var model = ModelWithFieldsOfDifferentTypes.Create(1);
 			var toModel = Serialize(model);
@@ -480,7 +623,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_ModelWithFieldsOfNullableTypes()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_ModelWithFieldsOfNullableTypes()
 		{
 			var model = ModelWithFieldsOfNullableTypes.Create(1);
 			var toModel = Serialize(model);
@@ -489,7 +635,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_ModelWithFieldsOfNullableTypes_of_nullables()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_ModelWithFieldsOfNullableTypes_of_nullables()
 		{
 			var model = new ModelWithFieldsOfNullableTypes();
 			var toModel = Serialize(model);
@@ -497,6 +646,7 @@ namespace ServiceStack.Text.Tests
 			ModelWithFieldsOfNullableTypes.AssertIsEqual(toModel, model);
 		}
 
+#if !NETCF
 		[Ignore("Causing infinite recursion in TypeToString")]
 		[Test]
 		public void Can_convert_ModelWithComplexTypes()
@@ -506,9 +656,13 @@ namespace ServiceStack.Text.Tests
 
 			ModelWithComplexTypes.AssertIsEqual(toModel, model);
 		}
+#endif
 
 		[Test]
-		public void Can_convert_model_with_TypeChar()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_model_with_TypeChar()
 		{
 			var model = new ModelWithIdAndName { Id = 1, Name = "in } valid" };
 			var toModel = Serialize(model);
@@ -517,7 +671,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_model_with_ListChar()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_model_with_ListChar()
 		{
 			var model = new ModelWithIdAndName { Id = 1, Name = "in [ valid" };
 			var toModel = Serialize(model);
@@ -529,7 +686,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_ModelWithMapAndList_with_ListChar()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_ModelWithMapAndList_with_ListChar()
 		{
 			var model = new ModelWithMapAndList<ModelWithIdAndName> {
 				Id = 1,
@@ -543,6 +703,7 @@ namespace ServiceStack.Text.Tests
 			//ModelWithMapAndList.AssertIsEqual(toModel, model);
 		}
 
+#if !NETCF
 		[Test]
 		public void Can_convert_ArrayDtoWithOrders()
 		{
@@ -551,9 +712,13 @@ namespace ServiceStack.Text.Tests
 
 			Assert.That(model.Equals(toModel), Is.True);
 		}
+#endif
 
 		[Test]
-		public void Can_convert_Field_Map_or_List_with_invalid_chars()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_Field_Map_or_List_with_invalid_chars()
 		{
 			var instance = new ModelWithMapAndList<string> {
 				Id = 1,
@@ -566,7 +731,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_convert_Field_Map_or_List_with_single_invalid_char()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_Field_Map_or_List_with_single_invalid_char()
 		{
 			foreach (var invalidChar in allCharsUsed)
 			{
@@ -583,6 +751,7 @@ namespace ServiceStack.Text.Tests
 			}
 		}
 
+#if !NETCF
 		[Test]
 		public void Can_convert_CustomerDto()
 		{
@@ -600,9 +769,13 @@ namespace ServiceStack.Text.Tests
 
 			Assert.That(model.Equals(toModel), Is.True);
 		}
+#endif
 
 		[Test]
-		public void Can_convert_List_Guid()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_convert_List_Guid()
 		{
 			var model = new List<Guid> {
 				Guid.NewGuid(),

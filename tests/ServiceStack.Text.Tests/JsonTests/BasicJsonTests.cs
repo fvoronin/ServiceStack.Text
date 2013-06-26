@@ -4,7 +4,14 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using NUnit.Framework;
 using ServiceStack.Text.Json;
-
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestCleanupAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+#endif
 
 #if !MONOTOUCH
 using ServiceStack.Common.Tests.Models;
@@ -12,7 +19,10 @@ using ServiceStack.Common.Tests.Models;
 
 namespace ServiceStack.Text.Tests.JsonTests
 {
-	[TestFixture]
+#if NETCF
+    [TestClass]
+#endif
+    [TestFixture]
 	public class BasicJsonTests
 		: TestBase
 	{
@@ -60,13 +70,19 @@ namespace ServiceStack.Text.Tests.JsonTests
 #endif
 		}
 
+#if NETCF
+        [TestCleanup]
+#endif
         [TearDown]
         public void TearDown()
         {
             JsConfig.Reset();
         }
 
-	    [Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 	    public void Can_parse_json_with_nullable_valuetypes()
 	    {
 	        var json = "{}";
@@ -81,6 +97,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(item.DateTime, Is.Null, "datetime");
 	    }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_parse_json_with_nullable_valuetypes_that_has_included_null_values()
         {
@@ -96,7 +115,10 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(item.DateTime, Is.Null, "datetime");
         }
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_parse_json_with_nulls_or_empty_string_in_nullables()
 		{
 			const string json = "{\"Int\":null,\"Boolean\":\"\"}";
@@ -106,6 +128,9 @@ namespace ServiceStack.Text.Tests.JsonTests
 			Assert.That(value.Boolean, Is.EqualTo(null));
 		}
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_parse_json_with_nullable_valuetypes_that_has_no_value_specified()
         {
@@ -121,7 +146,10 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(item.DateTime, Is.Null, "datetime");
         }
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_handle_json_primitives()
 		{
 			var json = JsonSerializer.SerializeToString(JsonPrimitives.Create(1));
@@ -131,7 +159,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 				"{\"Int\":1,\"Long\":1,\"Float\":1,\"Double\":1,\"Boolean\":false,\"DateTime\":\"\\/Date(1)\\/\"}"));
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_parse_json_with_nulls()
 		{
 			const string json = "{\"Int\":1,\"NullString\":null}";
@@ -141,7 +172,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			Assert.That(value.NullString, Is.Null);
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_dictionary_of_int_int()
 		{
 			var json = JsonSerializer.SerializeToString<IntIntDictionary>(new IntIntDictionary() { Dictionary = { { 10, 100 }, { 20, 200 } } });
@@ -158,7 +192,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			public IDictionary<int, int> Dictionary { get; set; }
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Serialize_skips_null_values_by_default()
 		{
 			var o = new NullValueTester
@@ -174,7 +211,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			Assert.That(s, Is.EqualTo("{\"Name\":\"Brandon\",\"Type\":\"Programmer\",\"SampleKey\":12}"));
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Serialize_can_include_null_values()
 		{
 			var o = new NullValueTester
@@ -198,7 +238,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Deserialize_sets_null_values()
 		{
 			var s = "{\"Name\":\"Brandon\",\"Type\":\"Programmer\",\"SampleKey\":12,\"Nothing\":null}";
@@ -209,7 +252,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			Assert.That(o.Nothing, Is.Null);
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Deserialize_ignores_omitted_values()
 		{
 			var s = "{\"Type\":\"Programmer\",\"SampleKey\":2}";
@@ -270,7 +316,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			public string Name { get; set; }
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_override_name()
 		{
 			var person = new Person
@@ -294,6 +343,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Eight = 8
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialize_unsigned_flags_enum()
         {
@@ -325,6 +377,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             public ExampleEnumWithoutFlagsAttribute ? EnumProp1 { get; set; }
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialize_unsigned_enum_with_turned_on_TreatEnumAsInteger()
         {
@@ -340,6 +395,9 @@ namespace ServiceStack.Text.Tests.JsonTests
 			Assert.That(TypeSerializer.SerializeToString(anon), Is.EqualTo("{EnumProp1:1,EnumProp2:2}"));
 		}
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialize_nullable_enum_with_turned_on_TreatEnumAsInteger()
         {
@@ -353,6 +411,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(JsonSerializer.SerializeToString(anon), Is.EqualTo("{\"EnumProp1\":1}"));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_deserialize_unsigned_enum_with_turned_on_TreatEnumAsInteger()
         {
@@ -365,6 +426,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(o.EnumProp2, Is.EqualTo(ExampleEnumWithoutFlagsAttribute.Two));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialize_object_array_with_nulls()
         {
@@ -373,8 +437,11 @@ namespace ServiceStack.Text.Tests.JsonTests
 
             Assert.That(objs.ToJson(), Is.EqualTo("[\"hello\",null]"));
         }
-        
 
+
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Should_return_null_instance_for_empty_json()
         {
@@ -382,6 +449,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.IsNull(o);
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_parse_empty_string_dictionary_with_leading_whitespace()
         {
@@ -389,6 +459,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(serializer.DeserializeFromString(" {}"), Is.Empty);
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_parse_nonempty_string_dictionary_with_leading_whitespace()
         {
@@ -399,6 +472,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(dictionary["B"], Is.EqualTo("O"));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_parse_empty_dictionary_with_leading_whitespace()
         {
@@ -406,6 +482,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(serializer.DeserializeFromString(" {}"), Is.Empty);
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_parse_nonempty_dictionary_with_leading_whitespace()
         {
@@ -416,6 +495,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(dictionary[2], Is.EqualTo(5.0));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_parse_empty_hashtable_with_leading_whitespace()
         {
@@ -423,6 +505,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(serializer.DeserializeFromString(" {}"), Is.Empty);
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_parse_nonempty_hashtable_with_leading_whitespace()
         {
@@ -433,6 +518,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(hashtable["B"].ToString(), Is.EqualTo(2.ToString()));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_parse_empty_json_object_with_leading_whitespace()
         {
@@ -440,6 +528,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(serializer.DeserializeFromString(" {}"), Is.Empty);
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_parse_nonempty_json_object_with_leading_whitespace()
         {
@@ -449,6 +540,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(jsonObject["foo"], Is.EqualTo("bar"));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_parse_empty_key_value_pair_with_leading_whitespace()
         {
@@ -456,6 +550,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(serializer.DeserializeFromString(" {}"), Is.EqualTo(default(KeyValuePair<string, string>)));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_parse_nonempty_key_value_pair_with_leading_whitespace()
         {
@@ -464,6 +561,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(keyValuePair, Is.EqualTo(new KeyValuePair<string, string>("foo", "bar")));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_parse_empty_object_with_leading_whitespace()
         {
@@ -473,6 +573,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(foo.Bar, Is.Null);
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_parse_nonempty_object_with_leading_whitespace()
         {

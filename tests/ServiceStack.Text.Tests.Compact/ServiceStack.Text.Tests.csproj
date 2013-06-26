@@ -1,0 +1,251 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{DD50A82B-7E6E-45AF-A17A-3C4C84729225}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>ServiceStack.Text.Tests</RootNamespace>
+    <AssemblyName>ServiceStack.Text.Tests</AssemblyName>
+    <PlatformFamilyName>PocketPC</PlatformFamilyName>
+    <PlatformID>b2c48bd2-963d-4549-9169-1fa021dce484</PlatformID>
+    <OSVersion>5.2</OSVersion>
+    <DeployDirSuffix>ServiceStack.Text.Tests</DeployDirSuffix>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FormFactorID>
+    </FormFactorID>
+    <WarningLevel>4</WarningLevel>
+    <ProjectTypeGuids>{73A5A715-AF05-47af-9C33-47A864AF9AE7};{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{4D628B5B-2FBC-4AA6-8C16-197242AEB884};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <NativePlatformName>Windows Mobile 6 Professional SDK</NativePlatformName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <FileAlignment>512</FileAlignment>
+    <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <DefineConstants>TRACE;DEBUG;NETCF</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;NETCF</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <FileAlignment>512</FileAlignment>
+    <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.SmartDevice.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="nunit.framework, Version=2.5.3.9345, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\tests\.NETCF\NUnit_Framework_for_CF_2.5.3.9345\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Common.Compact, Version=1.0.4907.20168, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\tests\.NETCF\ServiceStack.Common.Compact.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Common.Tests.Compact, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\tests\.NETCF\ServiceStack.Common.Tests.Compact.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Interfaces.Compact, Version=1.0.4907.20167, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\tests\.NETCF\ServiceStack.Interfaces.Compact.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\ServiceStack.Text.Tests\AdhocModelTests.cs">
+      <Link>AdhocModelTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\AnonymousTypes.cs">
+      <Link>AnonymousTypes.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\BasicStringSerializerTests.cs">
+      <Link>BasicStringSerializerTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\CustomStructTests.cs">
+      <Link>CustomStructTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\DateTimeExtensionsTests.cs">
+      <Link>DateTimeExtensionsTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\DateTimeOffsetAndTimeSpanTests.cs">
+      <Link>DateTimeOffsetAndTimeSpanTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\DdnContentIngestTests.cs">
+      <Link>DdnContentIngestTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\DdnDtoTests.cs">
+      <Link>DdnDtoTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\DictionaryTests.cs">
+      <Link>DictionaryTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\DynamicModels\DataModel\CustomCollection.cs">
+      <Link>DynamicModels\DataModel\CustomCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\DynamicModels\DataModel\CustomCollectionDto.cs">
+      <Link>DynamicModels\DataModel\CustomCollectionDto.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\DynamicModels\DataModel\CustomCollectionItem.cs">
+      <Link>DynamicModels\DataModel\CustomCollectionItem.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\DynamicModels\DataModel\CustomException.cs">
+      <Link>DynamicModels\DataModel\CustomException.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\DynamicModels\DataModel\DataContainer.cs">
+      <Link>DynamicModels\DataModel\DataContainer.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\DynamicModels\DataModel\DataContainerBase.cs">
+      <Link>DynamicModels\DataModel\DataContainerBase.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\DynamicModels\DataModel\DynamicType.cs">
+      <Link>DynamicModels\DataModel\DynamicType.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\DynamicModels\DataModel\StrictType.cs">
+      <Link>DynamicModels\DataModel\StrictType.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\DynamicModels\ModelWithAllTypes.cs">
+      <Link>DynamicModels\ModelWithAllTypes.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\DynamicModels\ModelWithComplexTypes.cs">
+      <Link>DynamicModels\ModelWithComplexTypes.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\DynamicObjectTests.cs">
+      <Link>DynamicObjectTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\EnumTests.cs">
+      <Link>EnumTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\GenericCollectionTests.cs">
+      <Link>GenericCollectionTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\InterfaceTests.cs">
+      <Link>InterfaceTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonObjectTests.cs">
+      <Link>JsonObjectTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\AnonymousDeserializationTests.cs">
+      <Link>JsonTests\AnonymousDeserializationTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\BackingFieldTests.cs">
+      <Link>JsonTests\BackingFieldTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\BasicJsonTests.cs">
+      <Link>JsonTests\BasicJsonTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\BasicPropertiesTests.cs">
+      <Link>JsonTests\BasicPropertiesTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\CamelCaseTests.cs">
+      <Link>JsonTests\CamelCaseTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\CustomRawSerializerTests.cs">
+      <Link>JsonTests\CustomRawSerializerTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\CustomSerializerTests.cs">
+      <Link>JsonTests\CustomSerializerTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\DictionaryDeserializationTests.cs">
+      <Link>JsonTests\DictionaryDeserializationTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\DictionaryTests.cs">
+      <Link>JsonTests\DictionaryTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\EscapedCharsTests.cs">
+      <Link>JsonTests\EscapedCharsTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\IDictionarySerializationTests.cs">
+      <Link>JsonTests\IDictionarySerializationTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\JsonArrayObjectTests.cs">
+      <Link>JsonTests\JsonArrayObjectTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\JsonDateTimeTests.cs">
+      <Link>JsonTests\JsonDateTimeTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\JsonObjectTests.cs">
+      <Link>JsonTests\JsonObjectTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\LowercaseUnderscoreTests.cs">
+      <Link>JsonTests\LowercaseUnderscoreTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\ModelWithAllTypesTests.cs">
+      <Link>JsonTests\ModelWithAllTypesTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\ModelWithComplexTypesTest.cs">
+      <Link>JsonTests\ModelWithComplexTypesTest.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\PolymorphicInstanceTest.cs">
+      <Link>JsonTests\PolymorphicInstanceTest.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\PolymorphicListTests.cs">
+      <Link>JsonTests\PolymorphicListTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\PropertyConventionTests.cs">
+      <Link>JsonTests\PropertyConventionTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\PublicFieldTest.cs">
+      <Link>JsonTests\PublicFieldTest.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\JsonTests\ThrowOnDeserializeErrorTest.cs">
+      <Link>JsonTests\ThrowOnDeserializeErrorTest.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\MessagingTests.cs">
+      <Link>MessagingTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\NullableTypesTests.cs">
+      <Link>NullableTypesTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\Support\DdnDtos.cs">
+      <Link>Support\DdnDtos.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\Support\MovieDtos.cs">
+      <Link>Support\MovieDtos.cs</Link>
+    </Compile>
+    <Compile Include="..\ServiceStack.Text.Tests\TestBase.cs">
+      <Link>TestBase.cs</Link>
+    </Compile>
+    <Compile Include="ATest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AuthoringTests.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ServiceStack.Text.Compact\ServiceStack.Text.Compact.csproj">
+      <Project>{F3B9CC1B-7614-49F4-A2F3-85986377323A}</Project>
+      <Name>ServiceStack.Text.Compact</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
+  <PropertyGroup Condition="'$(BuildingInsideVisualStudio)'=='true' ">
+    <DeviceTestAssemblySearchPath>$(DevEnvDir)PublicAssemblies</DeviceTestAssemblySearchPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblySearchPaths>$(DeviceTestAssemblySearchPath);$(AssemblySearchPaths)</AssemblySearchPaths>
+  </PropertyGroup>
+</Project>

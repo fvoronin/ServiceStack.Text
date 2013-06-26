@@ -3,23 +3,52 @@ using System.Globalization;
 using System.Linq;
 using NUnit.Framework;
 using System.Runtime.Serialization;
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestCleanupAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using ClassInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute;
+using ClassCleanupAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+using TestContext = Microsoft.VisualStudio.TestTools.UnitTesting.TestContext;
+#endif
 
 namespace ServiceStack.Text.Tests.JsonTests
 {
+#if NETCF
+    [TestClass]
+#endif
     public class CustomSerializerTests : TestBase
     {
         static CustomSerializerTests()
         {
+            JsConfig.Reset();
             JsConfig<EntityWithValues>.RawSerializeFn = SerializeEntity;
             JsConfig<EntityWithValues>.RawDeserializeFn = DeserializeEntity;
         }
 
+#if NETCF
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            JsConfig.Reset();
+            JsConfig<EntityWithValues>.RawSerializeFn = SerializeEntity;
+            JsConfig<EntityWithValues>.RawDeserializeFn = DeserializeEntity;
+        }
+
+        [ClassCleanup]
+#endif
         [TestFixtureTearDown]
-        public void TestFixtureTearDown()
+        public static void TestFixtureTearDown()
         {
             JsConfig.Reset();
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialize_Entity()
         {
@@ -27,6 +56,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             JsonSerializeAndCompare(originalEntity);
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialize_arrays_of_entities()
         {
@@ -131,6 +163,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             public bool InTest1 { get; set; }
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_Serialize_With_Custom_Constructor()
         {
@@ -179,9 +214,27 @@ namespace ServiceStack.Text.Tests.JsonTests
             }
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_detect_dto_with_no_Version()
         {
+#if NETCF
+            using (JsConfig.With(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                modelFactory =>
+                {
+                if (typeof(IHasVersion).IsAssignableFrom(modelFactory))
+                {
+                    return () => {
+                        var obj = (IHasVersion)modelFactory.CreateInstance();
+                        obj.Version = 0;
+                        return obj;
+                    };
+                }
+                return () => modelFactory.CreateInstance();
+            }))
+#else
             using (JsConfig.With(modelFactory:type => {
                 if (typeof(IHasVersion).IsAssignableFrom(type))
                 {
@@ -193,6 +246,7 @@ namespace ServiceStack.Text.Tests.JsonTests
                 }
                 return () => type.CreateInstance();
             }))
+#endif
             {
                 var dto = new Dto { Name = "Foo" };
                 var fromDto = dto.ToJson().FromJson<DtoV1>();

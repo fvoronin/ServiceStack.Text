@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using ServiceStack.Messaging;
+#if !NETCF
 using ServiceStack.ServiceInterface.Auth;
+#endif
 using ServiceStack.Text.Tests.JsonTests;
 
 namespace ServiceStack.Text.Tests
@@ -42,7 +44,7 @@ namespace ServiceStack.Text.Tests
 		[Test]
 		public void Can_deserialize_dto_with_object()
 		{
-			var dto = Serialize(new DtoWithObject { Results = new Message<string>("Body") }, includeXml: false);
+			var dto = Serialize(new DtoWithObject { Results = new Message<string>("Body") }, /*includeXml:*/ false);
 			Assert.That(dto.Results, Is.Not.Null);
 			Assert.That(dto.Results.GetType(), Is.EqualTo(typeof(Message<string>)));
 		}
@@ -88,10 +90,11 @@ namespace ServiceStack.Text.Tests
 		[Test]
 		public void Can_deserialize_interface_into_concrete_type()
 		{
-			var dto = Serialize(new MessagingTests.DtoWithInterface { Results = new Message<string>("Body") }, includeXml: false);
+			var dto = Serialize(new MessagingTests.DtoWithInterface { Results = new Message<string>("Body") }, /*includeXml:*/ false);
 			Assert.That(dto.Results, Is.Not.Null);
 		}
 
+#if !NETCF
 		public class UserSession
 		{
 			public UserSession()
@@ -189,7 +192,7 @@ namespace ServiceStack.Text.Tests
 			    JsConfig.Reset();
             }
 		}
-
+#endif
 		public class AggregateEvents
 		{
 			public Guid Id { get; set; }

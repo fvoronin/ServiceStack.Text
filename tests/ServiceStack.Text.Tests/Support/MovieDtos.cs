@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using ServiceStack.Common.Extensions;
+using ServiceStack.Common;
 using ServiceStack.DataAnnotations;
 
 namespace ServiceStack.Text.Tests.Support

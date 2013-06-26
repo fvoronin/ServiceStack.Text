@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-#if !MONOTOUCH
+#if !MONOTOUCH && !NETCF
 using System.Runtime.Serialization.Json;
 #endif
 using System.Text;
@@ -170,7 +170,7 @@ namespace ServiceStack.Text.Tests.JsonTests
 			Assert.That(list[1].Name, Is.EqualTo(@"Tigger"));
 		}
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !NETCF
 		[Test]
 		public void Can_deserialise_polymorphic_list_serialized_by_datacontractjsonserializer()
 		{
@@ -264,7 +264,7 @@ namespace ServiceStack.Text.Tests.JsonTests
 			Assert.That(animals[1].Name, Is.EqualTo(@"Tigger"));
 		}
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !NETCF
 		[Test]
 		public void Can_deserialise_an_entity_containing_a_polymorphic_property_serialized_by_datacontractjsonserializer()
 		{

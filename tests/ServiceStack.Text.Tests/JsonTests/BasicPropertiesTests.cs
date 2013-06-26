@@ -3,6 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestCleanupAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+#endif
 
 namespace ServiceStack.Text.Tests.JsonTests {
 	#region Test case types
@@ -21,7 +29,10 @@ namespace ServiceStack.Text.Tests.JsonTests {
 
 	#endregion
 
-	[TestFixture]
+#if NETCF
+    [TestClass]
+#endif
+    [TestFixture]
 	public class BasicPropertiesTests {
 		[Test]
 		public void Generic_dictionary_backed_IDictionary_round_trips_ok () {
@@ -40,7 +51,10 @@ namespace ServiceStack.Text.Tests.JsonTests {
 			Assert.That(DictStr(obj.Container), Is.EqualTo(DictStr(original.Container)));
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Generic_dictionary_backed_IDictionary_deserialises_to_generic_dictionary () {
 			var original = new ContainsIDictionary // Using IDictionary backing
 			{
@@ -58,7 +72,10 @@ namespace ServiceStack.Text.Tests.JsonTests {
 			Assert.That(DictStr(obj.Container), Is.EqualTo(DictStr(original.Container)));
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Generic_dictionary_deserialises_to_IDictionary () {
 			var original = new ContainsGenericStringDictionary // Using Dictionary<,> backing
 			{
@@ -76,7 +93,10 @@ namespace ServiceStack.Text.Tests.JsonTests {
 			Assert.That(DictStr(obj.Container), Is.EqualTo(DictStr(original.Container)));
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Generic_dictionary_round_trips_ok () {
 			var original = new ContainsGenericStringDictionary {
 				Container = new Dictionary<string, string>
@@ -93,7 +113,10 @@ namespace ServiceStack.Text.Tests.JsonTests {
 			Assert.That(DictStr(obj.Container), Is.EqualTo(DictStr(original.Container)));
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Generic_dictionary_and_IDictionary_serialise_the_same () {
 			JsConfig.PreferInterfaces = true;
 			JsConfig.ExcludeTypeInfo = false;
@@ -124,6 +147,7 @@ namespace ServiceStack.Text.Tests.JsonTests {
 			Assert.That(genDict, Is.EqualTo(iDict));
 		}
 
+#if !NETCF
 		[Test]
 		[Ignore("Very complex mappings, not needed for most tasks.")]
 		public void Complex_dictionaries_round_trip () {
@@ -153,7 +177,7 @@ namespace ServiceStack.Text.Tests.JsonTests {
 			Assert.That(copy_b.GuidToInt[Guid.Empty], Is.EqualTo(10), "Second copy was incorrect");
 			Assert.That(string_a, Is.EqualTo(string_b), "Serialised forms not same");
 		}
-
+#endif
 		static string DictStr (IDictionary d) {
 			var sb = new StringBuilder();
 			foreach (var key in d.Keys) { sb.AppendLine(key + " = " + d[key]); }

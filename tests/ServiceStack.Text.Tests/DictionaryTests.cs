@@ -3,16 +3,28 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using NUnit.Framework;
 using ServiceStack.Text.Tests.DynamicModels.DataModel;
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestCleanupAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+#endif
 
 namespace ServiceStack.Text.Tests
 {
-	[TestFixture]
-	public class DictionaryTests
+#if NETCF
+    [TestClass]
+#endif
+    [TestFixture]
+    public class DictionaryTests
 		: TestBase
 	{
 		[TestFixtureSetUp]
 		public void SetUp()
 		{
+            JsConfig.Reset();
 #if MONOTOUCH
 			JsConfig.RegisterTypeForAot<Dictionary<string, int>> ();
 			JsConfig.RegisterTypeForAot<KeyValuePair<int, string>> ();
@@ -30,13 +42,27 @@ namespace ServiceStack.Text.Tests
 #endif
 		}
 
+#if NETCF
+/*
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            JsConfig.Reset();
+        }
+*/
+
+        [TestCleanup]
+#endif
         [TearDown]
         public void TearDown()
         {
             JsConfig.Reset();
         }
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_one_level_dictionary()
 		{
 			var map = new Dictionary<string, int>
@@ -47,7 +73,10 @@ namespace ServiceStack.Text.Tests
 			Serialize(map);
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_empty_map()
 		{
 			var emptyMap = new Dictionary<string, int>();
@@ -55,7 +84,10 @@ namespace ServiceStack.Text.Tests
 			Serialize(emptyMap);
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_empty_string_map()
 		{
 			var emptyMap = new Dictionary<string, string>();
@@ -63,7 +95,10 @@ namespace ServiceStack.Text.Tests
 			Serialize(emptyMap);
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_two_level_dictionary()
 		{
 			var map = new Dictionary<string, Dictionary<string, int>>
@@ -83,7 +118,10 @@ namespace ServiceStack.Text.Tests
 			Serialize(map);
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_two_level_dictionary_with_int_key()
 		{
 			var map = new Dictionary<int, Dictionary<string, int>>
@@ -103,7 +141,10 @@ namespace ServiceStack.Text.Tests
 			Serialize(map);
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_deserialize_two_level_dictionary_with_array()
 		{
             JsConfig.TryToParsePrimitiveTypeValues = true;
@@ -131,7 +172,10 @@ namespace ServiceStack.Text.Tests
             Assert.That(((List<object>)deserialized["array"])[2].ToJson(), Is.EqualTo("{\"Name\":\"Third\"}"));
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_deserialize_dictionary_with_special_characters_in_strings()
 		{
             JsConfig.TryToParsePrimitiveTypeValues = true;
@@ -207,7 +251,10 @@ namespace ServiceStack.Text.Tests
 		//    AssertDict(deserializedDict);
 		//}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Test_ServiceStack_Text_TypeSerializer()
 		{
             JsConfig.TryToParsePrimitiveTypeValues = true;
@@ -219,9 +266,14 @@ namespace ServiceStack.Text.Tests
 			AssertDict(deserializedDict);
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Test_ServiceStack_Text_JsonSerializer()
-		{
+        {
+            JsConfig.Reset();
+
             JsConfig.TryToParsePrimitiveTypeValues = true;
             JsConfig.ConvertObjectTypesIntoStringDictionary = true;
 
@@ -231,7 +283,10 @@ namespace ServiceStack.Text.Tests
 			AssertDict(deserializedDict);
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Test_ServiceStack_Text_JsonSerializer_Array_Value_Deserializes_Correctly()
         {
             JsConfig.TryToParsePrimitiveTypeValues = true;
@@ -244,7 +299,10 @@ namespace ServiceStack.Text.Tests
 			Assert.AreEqual(new List<int> {1, 2, 3}, deserializedDict["d"]);                
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_deserialize_mixed_dictionary_into_strongtyped_map()
 		{
 			var mixedMap = SetupDict();
@@ -259,13 +317,16 @@ namespace ServiceStack.Text.Tests
 			Assert.AreEqual(new[] {1, 2, 3}, mixedType.d);
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialise_null_values_from_dictionary_correctly()
 		{
 			JsConfig.IncludeNullValues = true;
 			var dictionary = new Dictionary<string, object> { { "value", null } };
 
-			Serialize(dictionary, includeXml: false);
+			Serialize(dictionary, /*includeXml:*/ false);
 
 			var json = JsonSerializer.SerializeToString(dictionary);
 			Log(json);
@@ -274,13 +335,16 @@ namespace ServiceStack.Text.Tests
 			JsConfig.Reset();
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Will_ignore_null_values_from_dictionary_correctly()
 		{
 			JsConfig.IncludeNullValues = false;
 			var dictionary = new Dictionary<string, string> { { "value", null } };
 
-			Serialize(dictionary, includeXml: false);
+			Serialize(dictionary, /*includeXml:*/ false);
 
 			var json = JsonSerializer.SerializeToString(dictionary);
 			Log(json);
@@ -295,7 +359,10 @@ namespace ServiceStack.Text.Tests
 			public string Bar { get; set; }
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_Dictionary_with_end_slash()
 		{
 			var foo = new FooSlash {
@@ -305,6 +372,9 @@ namespace ServiceStack.Text.Tests
 			Serialize(foo);
 		}
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialise_null_values_from_nested_dictionary_correctly()
         {
@@ -315,7 +385,10 @@ namespace ServiceStack.Text.Tests
 			JsConfig.Reset();
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_serialize_Dictionary_with_quotes()
 		{
 			var dto = new Dictionary<string, string> { { "title", "\"test\"" } };
@@ -324,6 +397,9 @@ namespace ServiceStack.Text.Tests
 			Assert.That(to["title"], Is.EqualTo(dto["title"]));
 		}
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialize_Dictionary_with_escaped_symbols_in_key()
         {
@@ -333,6 +409,9 @@ namespace ServiceStack.Text.Tests
             Assert.That(to.Keys.ToArray()[0], Is.EqualTo(@"a\fb"));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialize_Dictionary_with_escaped_symbols_in_key_and_binary_value()
         {
@@ -342,6 +421,9 @@ namespace ServiceStack.Text.Tests
             Assert.That(to.Keys.ToArray()[0], Is.EqualTo(@"a\fb"));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialize_Dictionary_with_int_key_and_string_with_quote()
         {
@@ -352,6 +434,9 @@ namespace ServiceStack.Text.Tests
             Assert.That(to[1], Is.EqualTo(@"a""b"));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialize_string_byte_Dictionary_with_UTF8()
         {
@@ -361,6 +446,9 @@ namespace ServiceStack.Text.Tests
             Assert.That(to.Keys.ToArray()[0], Is.EqualTo( "aфаž\"a"));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialize_string_string_Dictionary_with_UTF8()
         {
@@ -370,6 +458,9 @@ namespace ServiceStack.Text.Tests
             Assert.That(to.Keys.ToArray()[0], Is.EqualTo("aфаž\"a"));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_Deserialize_Object_To_Dictionary()
         {

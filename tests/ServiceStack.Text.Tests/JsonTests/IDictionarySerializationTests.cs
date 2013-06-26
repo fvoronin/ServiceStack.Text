@@ -1,12 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using ClassCleanupAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute;
+using TestCleanupAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+#endif
 
 namespace ServiceStack.Text.Tests.JsonTests
 {
+#if NETCF
+    [TestClass]
+#endif
     [TestFixture]
     public class IDictionarySerializationTests
     {
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void CanSerializeHashtable()
         {

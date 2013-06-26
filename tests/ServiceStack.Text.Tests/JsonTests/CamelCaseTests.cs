@@ -3,25 +3,45 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using NUnit.Framework;
 using ServiceStack.Text.Tests.Support;
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestCleanupAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+#endif
 
 namespace ServiceStack.Text.Tests.JsonTests
 {
+#if NETCF
+    [TestClass]
+#endif
     [TestFixture]
 	public class CamelCaseTests : TestBase
 	{
-		[SetUp]
+#if NETCF
+        [TestInitialize]
+#endif
+        [SetUp]
 		public void SetUp()
 		{
 			JsConfig.EmitCamelCaseNames = true;
 		}
 
-		[TearDown]
+#if NETCF
+        [TestCleanup]
+#endif
+        [TearDown]
 		public void TearDown()
 		{
 			JsConfig.Reset();
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Does_serialize_To_CamelCase()
 		{
 			var dto = new Movie
@@ -53,7 +73,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 			public string Name { get; set; }
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_override_name()
 		{
 			var person = new Person

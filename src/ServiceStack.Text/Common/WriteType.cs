@@ -125,7 +125,6 @@ namespace ServiceStack.Text.Common
 
                 string propertyName, propertyNameCLSFriendly, propertyNameLowercaseUnderscore;
 
-#if !NETCF
                 if (isDataContract)
                 {
                     var dcsDataMember = propertyInfo.GetDataMember();
@@ -136,7 +135,6 @@ namespace ServiceStack.Text.Common
                     propertyNameLowercaseUnderscore = dcsDataMember.Name ?? propertyName.ToLowercaseUnderscore();
                 }
                 else
-#endif
                 {
                     propertyName = propertyInfo.Name;
                     propertyNameCLSFriendly = propertyName.ToCamelCase();

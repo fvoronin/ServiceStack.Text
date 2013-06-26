@@ -412,12 +412,14 @@ namespace ServiceStack.Text.Common
 #if !NETCF
             return new DateTimeOffset(date, offset).DateTime;
 #else // TODO NETCF check valid datetime offset conversion
-            return (date + offset);
+            return date.ToUniversalTime() + offset;
 #endif
         }
 
 #if !NETCF
         private static TimeZoneInfo LocalTimeZone = TimeZoneInfo.Local;
+#else
+        private static TimeZone LocalTimeZone = TimeZone.CurrentTimeZone;
 #endif
         public static void WriteWcfJsonDate(TextWriter writer, DateTime dateTime)
         {
@@ -434,11 +436,7 @@ namespace ServiceStack.Text.Common
                 if (JsConfig.DateHandler == JsonDateHandler.TimestampOffset && dateTime.Kind == DateTimeKind.Unspecified)
                     offset = UnspecifiedOffset;
                 else
-#if !NETCF
                     offset = LocalTimeZone.GetUtcOffset(dateTime).ToTimeOffsetString();
-#else
-                    throw new NotImplementedException("DateTimeSerializer.WriteWcfJsonDate not implemented for DateTimeKind != UTC");
-#endif
             }
 
             writer.Write(EscapedWcfJsonPrefix);

@@ -42,10 +42,12 @@ namespace ServiceStack.Text.Tests.JsonTests
     		    JsonSerializer.DeserializeFromString(json, typeof(TestDto));
                 Assert.Fail("Exception should have been thrown.");
             } catch (SerializationException ex) {
+#if !NETCF
                 Assert.That(ex.Data, Is.Not.Null);
                 Assert.That(ex.Data["propertyName"], Is.EqualTo("idBad"));
                 Assert.That(ex.Data["propertyValueString"], Is.EqualTo("abc"));
                 Assert.That(ex.Data["propertyType"], Is.EqualTo(typeof(int)));
+#endif
             }
 		}
 

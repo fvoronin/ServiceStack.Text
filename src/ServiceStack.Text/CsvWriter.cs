@@ -137,7 +137,6 @@ namespace ServiceStack.Text
 
                 PropertyGetters.Add(propertyInfo.GetValueGetter<T>());
                 var propertyName = propertyInfo.Name;
-#if !NETCF
                 if (isDataContract)
                 {
                     var dcsDataMember = propertyInfo.GetDataMember();
@@ -146,7 +145,6 @@ namespace ServiceStack.Text
                         propertyName = dcsDataMember.Name;
                     }
                 }
-#endif
                 Headers.Add(propertyName);
             }
         }

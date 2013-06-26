@@ -92,12 +92,15 @@ namespace ServiceStack.Text.Common
                     return null;
                 }
 
-#if !SILVERLIGHT && !MONOTOUCH && !NETCF
                 if (type.IsInterface || type.IsAbstract)
                 {
+#if !SILVERLIGHT && !MONOTOUCH && !NETCF
                     return DynamicProxy.GetInstanceFor(type).GetType();
-                }
+#else
+                    throw new NotImplementedException("Deserialization from Interface and Abstract type does not supported");
 #endif
+                }
+
 
                 return type;
             }

@@ -1,9 +1,19 @@
 using NUnit.Framework;
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+#endif
 
 namespace ServiceStack.Text.Tests.JsonTests
 {
-	[TestFixture]
-	public class AnonymousDeserializationTests
+#if NETCF
+    [TestClass]
+#endif
+    [TestFixture]
+    public class AnonymousDeserializationTests
 		: TestBase
 	{
 		private class Item
@@ -17,7 +27,11 @@ namespace ServiceStack.Text.Tests.JsonTests
 			}
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+        [Ignore] // .NET CF does not fully support anonymous types
+#endif
+        [Test]
 		public void Can_deserialize_to_anonymous_type()
 		{
 			var original = Item.Create();

@@ -2,10 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using NUnit.Framework;
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+using TestCleanupAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+#endif
+
 
 namespace ServiceStack.Text.Tests
 {
-	[TestFixture]
+#if NETCF
+    [TestClass]
+#endif
+    [TestFixture]
 	public class DynamicObjectTests
 		: TestBase
 	{
@@ -15,13 +27,19 @@ namespace ServiceStack.Text.Tests
 			public string Url { get; set; }
 		}
 
+#if NETCF
+        [TestCleanup]
+#endif
         [TearDown]
         public void TearDown()
         {
             JsConfig.Reset();
         }
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Dictionary_Object_UrlStatus()
 		{
 			var urlStatus = new UrlStatus {
@@ -56,7 +74,10 @@ namespace ServiceStack.Text.Tests
 			public KeyValuePair<string, string>[] Values { get; set; }
 		}
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_Serailize_KVP_array()
 		{
 			var kvpArray = new[] {
@@ -69,9 +90,12 @@ namespace ServiceStack.Text.Tests
 
 			Console.WriteLine(dto.ToJson());
 
-			Serialize(dto, includeXml: false);
+			Serialize(dto, /*includeXml:*/ false);
 		}
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_deserialize_object_string()
         {
@@ -83,6 +107,9 @@ namespace ServiceStack.Text.Tests
             Assert.That(deserialized, Is.EqualTo(json));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_deserialize_object_array()
         {
@@ -97,6 +124,9 @@ namespace ServiceStack.Text.Tests
             Assert.That(((List<object>)deserialized)[2], Is.EqualTo(3));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_deserialize_object_epoch_datetime()
         {
@@ -109,6 +139,9 @@ namespace ServiceStack.Text.Tests
             Assert.That(((Dictionary<string, object>)deserialized)["foo"], Is.InstanceOf<DateTime>());
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_deserialize_object_utc_iso8601_datetime()
         {
@@ -123,6 +156,9 @@ namespace ServiceStack.Text.Tests
             Assert.That(datetime, Is.EqualTo(new DateTime(2012, 11, 20, 21, 37, 32, 870, DateTimeKind.Utc).ToLocalTime()));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_deserialize_object_iso8601_datetime_with_timezone()
         {
@@ -138,6 +174,9 @@ namespace ServiceStack.Text.Tests
             Assert.That(datetime, Is.EqualTo(new DateTime(2012, 11, 20, 19, 37, 32, 870, DateTimeKind.Utc).ToLocalTime()));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_deserialize_object_dictionary()
         {
@@ -150,6 +189,10 @@ namespace ServiceStack.Text.Tests
             Assert.That(((Dictionary<string, object>)deserialized)["foo"], Is.EqualTo("bar"));
         }
 
+#if NETCF
+        [TestMethod]
+        [Ignore] // .NET CF does not support multiple culture
+#endif
         [Test, SetCulture("nl-NL")]
         public void Can_deserialize_object_dictionary_when_current_culture_has_decimal_comma()
         {
@@ -165,7 +208,10 @@ namespace ServiceStack.Text.Tests
             Assert.That(dict["doubleValue"], Is.InstanceOf<double>() & Is.EqualTo(double.MaxValue), "double");
         }
 
-		[Test]
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Can_deserialize_object_dictionary_with_mixed_values_and_nulls_and_empty_array()
 		{
             JsConfig.TryToParsePrimitiveTypeValues = true;
@@ -188,6 +234,9 @@ namespace ServiceStack.Text.Tests
             Assert.That(dict["dateValue"], Is.EqualTo(new DateTime(1994, 11, 24, 0, 0, 0, DateTimeKind.Utc)));
 		}
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
 		public void Can_deserialize_object_dictionary_with_line_breaks()
 		{
@@ -208,6 +257,9 @@ namespace ServiceStack.Text.Tests
             Assert.That(dict["value"], Is.EqualTo(5));
 		}
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
 		public void Can_deserialize_object_array_with_line_breaks_before_first_element()
 		{
@@ -226,6 +278,9 @@ namespace ServiceStack.Text.Tests
             Assert.That(arrayValues[0], Is.Not.Null);
 		}
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
 		public void Can_deserialize_object_array_with_line_breaks_after_last_element()
 		{
@@ -244,6 +299,9 @@ namespace ServiceStack.Text.Tests
             Assert.That(arrayValues[0], Is.Not.Null);
 		}
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
 		public void Can_deserialize_object_array_with_line_breaks_around_element()
 		{
@@ -263,6 +321,9 @@ namespace ServiceStack.Text.Tests
             Assert.That(arrayValues[0], Is.Not.Null);
 		}
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
 		public void Can_deserialize_object_array_with_line_breaks_around_number_element()
 		{

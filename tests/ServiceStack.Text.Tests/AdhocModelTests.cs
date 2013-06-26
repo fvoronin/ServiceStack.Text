@@ -6,11 +6,21 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.Threading;
 using NUnit.Framework;
-using ServiceStack.Common.Extensions;
+using ServiceStack.Common;
 using ServiceStack.Text.Jsv;
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+#endif
 
 namespace ServiceStack.Text.Tests
 {
+#if NETCF
+    [TestClass]
+#endif
     [TestFixture]
     public class AdhocModelTests
         : TestBase
@@ -140,6 +150,9 @@ namespace ServiceStack.Text.Tests
             }
         }
 
+#if NETCF
+        [TestInitialize]
+#endif
         [SetUp]
         public void SetUp()
         {
@@ -147,6 +160,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_Deserialize_text()
         {
             var dtoString = "[{Id:1,Urn:urn:post:3a944f18-920c-498a-832d-cf38fed3d0d7/1,UserId:3a944f18920c498a832dcf38fed3d0d7,DateAdded:2010-02-17T12:04:45.2845615Z,DateModified:2010-02-17T12:04:45.2845615Z,OriginUserId:3a944f18920c498a832dcf38fed3d0d7,OriginUserName:testuser1,SourceUserId:3a944f18920c498a832dcf38fed3d0d7,SourceUserName:testuser1,SubjectUrn:urn:track:1,ContentUrn:urn:track:1,TrackUrns:[],CaptionUserId:3a944f18920c498a832dcf38fed3d0d7,CaptionSourceName:testuser1,PostType:Content}]";
@@ -154,6 +170,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_Serialize_single_FlowPostTransient()
         {
             var dto = FlowPostTransient.Create();
@@ -161,6 +180,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_serialize_jsv_dates()
         {
             var now = DateTime.Now;
@@ -171,6 +193,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_serialize_json_dates()
         {
             var now = DateTime.Now;
@@ -182,6 +207,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_Serialize_multiple_FlowPostTransient()
         {
             var dtos = new List<FlowPostTransient> {
@@ -263,6 +291,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Should_ignore_non_DataMember_TranslatedString()
         {
             var dto = new TestObject
@@ -298,6 +329,10 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+        [Ignore] // TODO NETCF add support for cyclical dependency
+#endif
         public void Can_Serialize_Cyclical_Dependency_via_interface()
         {
             JsConfig.PreferInterfaces = true;
@@ -310,7 +345,7 @@ namespace ServiceStack.Text.Tests
             };
             dto.Child.Parent = dto;
 
-            var fromDto = Serialize(dto, includeXml: false);
+            var fromDto = Serialize(dto, /*includeXml:*/ false);
 
             var parent = (IParent)fromDto.Child.Parent;
             Assert.That(parent.Id, Is.EqualTo(dto.Id));
@@ -323,7 +358,9 @@ namespace ServiceStack.Text.Tests
             public string Key { get; set; }
         }
 
-        [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_exclude_properties()
         {
             JsConfig<Exclude>.ExcludePropertyNames = new[] { "Id" };
@@ -346,6 +383,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_serialize_type_with_indexer()
         {
             var dto = new HasIndex { Id = 1 };
@@ -377,6 +417,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_serialize_struct_in_list()
         {
             var structs = new[] {
@@ -388,6 +431,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_serialize_list_of_bools()
         {
             Serialize(new List<bool> { true, false, true });
@@ -436,6 +482,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_serialize_max_values()
         {
             var dto = new PolarValues
@@ -451,6 +500,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_serialize_max_values_less_1()
         {
             var dto = new PolarValues
@@ -466,6 +518,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_serialize_min_values()
         {
             var dto = new PolarValues
@@ -487,6 +542,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_serialize_1_level_cyclical_dto()
         {
             var dto = new TestClass
@@ -495,7 +553,7 @@ namespace ServiceStack.Text.Tests
                 Inner = new TestClass { Description = "inner" }
             };
 
-            var from = Serialize(dto, includeXml: false);
+            var from = Serialize(dto, /*includeXml:*/ false);
 
             Assert.That(from.Description, Is.EqualTo(dto.Description));
             Assert.That(from.Inner.Description, Is.EqualTo(dto.Inner.Description));
@@ -510,6 +568,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_Deserialize()
         {
             var items = TypeSerializer.DeserializeFromString<List<string>>(
@@ -519,6 +580,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_Serialize_Array_of_enums()
         {
             var enumArr = new[] { EnumValues.Enum1, EnumValues.Enum2, EnumValues.Enum3, };
@@ -527,6 +591,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_Serialize_Array_of_chars()
         {
             var enumArr = new[] { 'A', 'B', 'C', };
@@ -535,6 +602,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_Serialize_Array_with_nulls()
         {
             var t = new
@@ -556,6 +626,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void DumpFail()
         {
             var arrayOfA = new[] { new A { Value = "a" }, null, new A { Value = "b" } };
@@ -563,12 +636,16 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Deserialize_array_with_null_elements()
         {
             var json = "[{\"Value\": \"a\"},null,{\"Value\": \"b\"}]";
             var o = JsonSerializer.DeserializeFromString<A[]>(json);
         }
 
+#if !NETCF
         [Test]
         public void Can_serialize_StringCollection()
         {
@@ -576,6 +653,7 @@ namespace ServiceStack.Text.Tests
             var from = Serialize(sc, includeXml: false);
             Console.WriteLine(from.Dump());
         }
+#endif
 
         public class Breaker
         {
@@ -583,6 +661,9 @@ namespace ServiceStack.Text.Tests
         }
 
         [Test]
+#if NETCF
+        [TestMethod]
+#endif
         public void Can_serialize_IEnumerable()
         {
             var dto = new Breaker
@@ -590,7 +671,7 @@ namespace ServiceStack.Text.Tests
                 Blah = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9 }
             };
 
-            var from = Serialize(dto, includeXml: false);
+            var from = Serialize(dto, /*includeXml:*/ false);
             from.PrintDump();
         }
     }

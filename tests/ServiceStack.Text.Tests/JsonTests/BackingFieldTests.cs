@@ -1,5 +1,12 @@
 ﻿using System;
 using NUnit.Framework;
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+#endif
 
 namespace ServiceStack.Text.Tests.JsonTests
 {
@@ -24,6 +31,10 @@ namespace ServiceStack.Text.Tests.JsonTests
 	{
 		long backing;
 
+#if NETCF
+	    public GetSetWithBacking() { }
+#endif
+
 		public GetSetWithBacking(long i)
 		{
 			Property = i;
@@ -38,9 +49,16 @@ namespace ServiceStack.Text.Tests.JsonTests
 
 	#endregion
 
-	[TestFixture]
+#if NETCF
+    [TestClass]
+#endif
+    [TestFixture]
 	public class BackingFieldTests
-	{		[Test]
+	{
+#if NETCF
+        [TestMethod]
+#endif
+        [Test]
 		public void Backed_get_set_properties_can_be_deserialised()
 		{
 			var original = new GetSetWithBacking(123344044);
@@ -52,7 +70,7 @@ namespace ServiceStack.Text.Tests.JsonTests
 			Assert.That(copy.Property, Is.EqualTo(original.Property));
 		}
 
-
+#if !NETCF
         [Ignore("By Design: Deserialization doesn't use constructor injection, Properties need to be writeable")]
 		[Test]
 		public void Backed_get_properties_can_be_deserialised()
@@ -70,5 +88,6 @@ namespace ServiceStack.Text.Tests.JsonTests
 
 			Assert.That(copy.Property, Is.EqualTo(original.Property));
 		}
+#endif
 	}
 }

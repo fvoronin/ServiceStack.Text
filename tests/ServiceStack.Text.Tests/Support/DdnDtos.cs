@@ -157,7 +157,9 @@ namespace ServiceStack.Text.Tests.Support
 	}
 
 	[Serializable]
+#if !NETCF
 	[CollectionDataContract(Namespace = "http://schemas.ddnglobal.com/types/", ItemName = "String")]
+#endif
 	public class ArrayOfString : List<string>
 	{
 		public ArrayOfString() { }
@@ -215,7 +217,9 @@ namespace ServiceStack.Text.Tests.Support
 	}
 
 	[Serializable]
+#if !NETCF
 	[CollectionDataContract(Namespace = "http://schemas.ddnglobal.com/types/", ItemName = "Post")]
+#endif
 	public class ArrayOfPost : List<Post>
 	{
 		public ArrayOfPost() { }
@@ -345,7 +349,9 @@ namespace ServiceStack.Text.Tests.Support
 		}
 	}
 
+#if !NETCF
 	[CollectionDataContract(Namespace = "http://schemas.ddnglobal.com/types/", ItemName = "Id")]
+#endif
 	public class ArrayOfStringId : List<string>
 	{
 		public ArrayOfStringId() { }
@@ -396,7 +402,9 @@ namespace ServiceStack.Text.Tests.Support
 		}
 	}
 
+#if !NETCF
 	[CollectionDataContract(Namespace = "http://schemas.ddnglobal.com/types/", ItemName = "Property")]
+#endif
 	public class Properties
 		: List<Property>
 	{
@@ -480,7 +488,9 @@ namespace ServiceStack.Text.Tests.Support
 
 	[DataContract(Namespace = "http://schemas.ddnglobal.com/types/")]
 	public class GetContentStatsResponse
+#if !NETCF
 		: IExtensibleDataObject
+#endif
 	{
 		public GetContentStatsResponse()
 		{
@@ -516,11 +526,13 @@ namespace ServiceStack.Text.Tests.Support
 			set;
 		}
 
+#if !NETCF
 		public ExtensionDataObject ExtensionData
 		{
 			get;
 			set;
 		}
+#endif
 
 		[DataMember]
 		public ResponseStatus ResponseStatus

@@ -2,8 +2,16 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 #if !MONOTOUCH
-using ServiceStack.Common.Extensions;
+using ServiceStack.Common;
 #endif
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+#endif
+
 
 namespace ServiceStack.Text.Tests
 {
@@ -65,7 +73,10 @@ namespace ServiceStack.Text.Tests
 	}
 
 	[TestFixture]
-	public class CustomStructTests
+#if NETCF
+    [TestClass]
+#endif
+    public class CustomStructTests
 		: TestBase
 	{
 		private static UserStat CreateUserStat(Guid userId, int score)
@@ -80,7 +91,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_serialize_empty_UserStat()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_serialize_empty_UserStat()
 		{
 			var userStat = new UserStat();
 			var dtoStr = TypeSerializer.SerializeToString(userStat);
@@ -91,7 +105,10 @@ namespace ServiceStack.Text.Tests
 		}
 
 		[Test]
-		public void Can_serialize_UserStat()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_serialize_UserStat()
 		{
 			var userId = new Guid("96d7a49f7a0f46918661217995c5e4cc");
 			var userStat = CreateUserStat(userId, 1);
@@ -103,7 +120,10 @@ namespace ServiceStack.Text.Tests
 		}
 #if !MONOTOUCH
 		[Test]
-		public void Can_serialize_UserStats_list()
+#if NETCF
+        [TestMethod]
+#endif
+        public void Can_serialize_UserStats_list()
 		{
 			var guidValues =  new[] {
           		new Guid("6203A3AF-1738-4CDF-A3AD-0F578AD198F0"), 

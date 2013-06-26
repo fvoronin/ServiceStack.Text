@@ -25,7 +25,16 @@ namespace ServiceStack.Text.Tests
 				Console.WriteLine(message);
 		}
 
+#if NETCF
+		public T Serialize<T>(T model)
+		{
+		    return Serialize<T>(model, false); // NETCF does not support xml serialization
+		}
+
+		public T Serialize<T>(T model, bool includeXml)
+#else
 		public T Serialize<T>(T model, bool includeXml = true)
+#endif
 		{
 			return Serialize(model, false, includeXml);
 		}
@@ -40,7 +49,16 @@ namespace ServiceStack.Text.Tests
 			return JsonSerialize(model, true);
 		}
 
+#if NETCF
+		public T SerializeAndCompare<T>(T model)
+		{
+            return SerializeAndCompare<T>(model, false); // NETCF does not support xml serialization
+		}
+
+		public T SerializeAndCompare<T>(T model, bool includeXml)
+#else
 		public T SerializeAndCompare<T>(T model, bool includeXml = true)
+#endif
 		{
 			return Serialize(model, true, includeXml);
 		}

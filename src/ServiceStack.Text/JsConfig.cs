@@ -29,6 +29,7 @@ namespace ServiceStack.Text
         }
 
 #if NETCF
+/*
         public static JsConfigScope With(bool? convertObjectTypesIntoStringDictionary, bool? tryToParsePrimitiveTypeValues,
                                          bool? includeNullValues, bool? excludeTypeInfo, bool? includeTypeInfo,
                                          bool? emitCamelCaseNames, bool? emitLowercaseUnderscoreNames,
@@ -75,7 +76,7 @@ namespace ServiceStack.Text
                         typeAttr, typeWriter, typeFinder, treatEnumAsInteger, alwaysUseUtc,
                         escapeUnicode, includePublicFields, maxDepth, null);
         }
-
+*/
         public static JsConfigScope With(bool? convertObjectTypesIntoStringDictionary, bool? tryToParsePrimitiveTypeValues,
             bool? includeNullValues, bool? excludeTypeInfo, bool? includeTypeInfo, bool? emitCamelCaseNames,
             bool? emitLowercaseUnderscoreNames, JsonDateHandler? dateHandler, JsonTimeSpanHandler? timeSpanHandler,

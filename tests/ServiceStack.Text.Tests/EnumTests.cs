@@ -1,12 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+using TestCleanupAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+#endif
 
 namespace ServiceStack.Text.Tests
 {
+#if NETCF
+    [TestClass]
+#endif
     [TestFixture]
     public class EnumTests
     {
+#if NETCF
+        [TestInitialize]
+#endif
         [SetUp]
         public void SetUp()
         {
@@ -34,6 +48,9 @@ namespace ServiceStack.Text.Tests
             public EnumWithoutFlags? NullableNoFlagsEnum { get; set; }
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_correctly_serialize_enums()
         {
@@ -61,6 +78,9 @@ namespace ServiceStack.Text.Tests
             Assert.That(JsonSerializer.DeserializeFromString<EnumWithoutFlags>(""), Is.EqualTo((EnumWithoutFlags)0));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void CanSerializeIntFlag()
         {
@@ -70,6 +90,9 @@ namespace ServiceStack.Text.Tests
             Assert.AreEqual("0", val);
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void CanSerializeSbyteFlag()
         {
@@ -104,6 +127,9 @@ namespace ServiceStack.Text.Tests
             Enum
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_use_enum_as_key_in_map()
         {

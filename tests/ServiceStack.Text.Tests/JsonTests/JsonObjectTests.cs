@@ -1,16 +1,32 @@
 ﻿using NUnit.Framework;
+#if NETCF
+using Assert = NUnit.Framework.Assert;
+using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using TestInitializeAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TestMethodAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using IgnoreAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.IgnoreAttribute;
+#endif
 
 namespace ServiceStack.Text.Tests.JsonTests
 {
+#if NETCF
+    [TestClass]
+#endif
     [TestFixture]
     public class JsonObjectTests
     {
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_parse_empty_object()
         {
             Assert.That(JsonObject.Parse("{}"), Is.Empty);
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_parse_empty_object_with_whitespaces()
         {
@@ -19,6 +35,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(JsonObject.Parse("{\t\t}"), Is.Empty);
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_parse_empty_object_with_mixed_whitespaces()
         {
@@ -32,6 +51,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             public Jackalope BabyJackalope { get; set; }
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_serialise_json_object_deserialise_typed_object()
         {
@@ -69,6 +91,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Action = new ElementActionDto { ElementId = "image_1", Action = "action goes here" }.ToJson()
         };
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_Serialize_TypedContainerDto()
         {
@@ -89,6 +114,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(imgContent.ElementId, Is.EqualTo(fromContent.ElementId));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_DeSerialize_TypedContainerDto_with_JsonObject()
         {
@@ -126,6 +154,9 @@ namespace ServiceStack.Text.Tests.JsonTests
             Assert.That(container.Destination.Content, Is.EqualTo(fromImage.Content));
         }
 
+#if NETCF
+        [TestMethod]
+#endif
         [Test]
         public void Can_Serialize_StringContainerDto()
         {

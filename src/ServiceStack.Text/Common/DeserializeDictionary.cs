@@ -21,8 +21,7 @@ using ServiceStack.Text.Json;
 
 namespace ServiceStack.Text.Common
 {
-    internal static class DeserializeDictionary<TSerializer>
-        where TSerializer : ITypeSerializer
+    internal static class DeserializeDictionary<TSerializer> where TSerializer : ITypeSerializer
     {
         private static readonly ITypeSerializer Serializer = JsWriter.GetTypeSerializer<TSerializer>();
 
@@ -243,21 +242,32 @@ namespace ServiceStack.Text.Common
         private static Dictionary<string, ParseDictionaryDelegate> ParseDelegateCache
             = new Dictionary<string, ParseDictionaryDelegate>();
 
+#if !NETCF
         private delegate object ParseDictionaryDelegate(string value, Type createMapType,
             ParseStringDelegate keyParseFn, ParseStringDelegate valueParseFn);
+#else
+        public delegate object ParseDictionaryDelegate(string value, Type createMapType,
+            ParseStringDelegate keyParseFn, ParseStringDelegate valueParseFn);
+#endif
 
         public static object ParseDictionaryType(string value, Type createMapType, Type[] argTypes,
             ParseStringDelegate keyParseFn, ParseStringDelegate valueParseFn)
         {
-
             ParseDictionaryDelegate parseDelegate;
             var key = GetTypesKey(argTypes);
             if (ParseDelegateCache.TryGetValue(key, out parseDelegate))
                 return parseDelegate(value, createMapType, keyParseFn, valueParseFn);
 
+#if !NETCF
             var mi = typeof(DeserializeDictionary<TSerializer>).GetPublicStaticMethod("ParseDictionary");
             var genericMi = mi.MakeGenericMethod(argTypes);
+
             parseDelegate = (ParseDictionaryDelegate)genericMi.MakeDelegate(typeof(ParseDictionaryDelegate));
+#else
+            // Issue in .NET CF with Delegate.CreateDelegate
+            // via http://social.msdn.microsoft.com/Forums/en-US/d1d8f91b-82e7-495b-aa8e-89d8f019eaeb/potential-issue-with-delegatecreatedelegate
+            parseDelegate = (ParseDictionaryDelegate)DelegateCreator<TSerializer>.ParseDictionaryDelegate(argTypes);
+#endif
 
             Dictionary<string, ParseDictionaryDelegate> snapshot, newCache;
             do
@@ -271,6 +281,9 @@ namespace ServiceStack.Text.Common
 
             return parseDelegate(value, createMapType, keyParseFn, valueParseFn);
         }
+
+#if NETCF
+#endif
 
         private static string GetTypesKey(params Type[] types)
         {

@@ -187,7 +187,16 @@ namespace ServiceStack.Text.Common
 #if !NETCF
             return isReadOnly ? (ICollection<T>)Activator.CreateInstance(createListType, to) : to;
 #else
-            return isReadOnly ? (ICollection<T>)createListType.GetConstructor(new Type[1] { typeof(ICollection<T>) }).Invoke(new[] {to}) : to;
+            if (isReadOnly)
+            {
+                // In .NET CF default constructor of ReadOnlyCollection has parameter IList<T> type
+                var ctor = createListType.GetConstructor(new[] {typeof (IList<T>)});
+                if (ctor == null)
+                    ctor = createListType.GetConstructor(new[] { typeof(ICollection<T>) });
+                return (ICollection<T>) ctor.Invoke(new[] { to });
+            }
+            
+            return to;
 #endif
         }
     }
